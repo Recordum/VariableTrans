@@ -35,4 +35,4 @@ jobs:
         script: |
           docker pull mingyuoh/variable-trans-backend:latest
           docker stop $(docker ps -q)
-          docker run -d -p 3000:3000 mingyuoh/variable-trans-backend:latest
+          docker run -d -p 80:3000 mingyuoh/variable-trans-backend:latest
