@@ -1,13 +1,10 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { TranslationService } from './translation/translation.service';
-import { TranslationController } from './translation/translation.controller';
 import { TranslationModule } from './translation/translation.module';
+import { WordCacheModule } from './word-cache/word-cache.module';
 
 @Module({
-  imports: [TranslationModule],
-  controllers: [AppController, TranslationController],
-  providers: [AppService, TranslationService],
+  imports: [TranslationModule, WordCacheModule],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
