@@ -1,5 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
-
-@Injectable()
-export class TranslationService {
+export interface TranslationService {
+  translateVariable(koreanWord: string, userId: string): Promise<string>;
+  recommandVariable(koreanWord: string, userId: string): Promise<string>;
 }
