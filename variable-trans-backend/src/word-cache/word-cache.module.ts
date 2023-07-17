@@ -4,10 +4,10 @@ import { WordCacheMapService } from './implementation/word-cache-map.service';
 @Module({
   providers: [
     {
-      provide: 'WordCached',
+      provide: 'WordCacheService',
       useClass: WordCacheMapService,
     },
   ],
-  exports: ['WordCached'],
+  exports: ['WordCacheService'],
 })
 export class WordCacheModule {}
