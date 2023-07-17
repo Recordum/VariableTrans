@@ -12,7 +12,7 @@ export class WordCacheMapService implements WordCacheService {
     return this.variableMap.get(koreanWord);
   }
 
-  private isWordCached(koreanWord: string): boolean {
+  public isWordCached(koreanWord: string): boolean {
     return this.variableMap.has(koreanWord);
   }
 

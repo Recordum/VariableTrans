@@ -13,4 +13,9 @@ describe('WordCacheMapService', () => {
     service.deleteWordCached('안녕');
     expect(() => service.getCachedVariable('안녕')).toThrowError(Error);
   });
+
+  it('should return true exist cached word', () => {
+    service.setWordCached('안녕', 'hello');
+    expect(service.isWordCached('안녕')).toBe(true);
+  });
 });
