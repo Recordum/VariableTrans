@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { WordCacheService } from '../word-cache.service';
 
 @Injectable()
-export class wordCacheMapService implements WordCacheService {
+export class WordCacheMapService implements WordCacheService {
   private variableMap: Map<string, string> = new Map();
 
   public getCachedVariable(koreanWord: string): string {
@@ -12,7 +12,7 @@ export class wordCacheMapService implements WordCacheService {
     return this.variableMap.get(koreanWord);
   }
 
-  public isWordCached(koreanWord: string): boolean {
+  private isWordCached(koreanWord: string): boolean {
     return this.variableMap.has(koreanWord);
   }
 
