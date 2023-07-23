@@ -37,6 +37,7 @@ describe('TranslationService', () => {
 
     service = module.get<TranslationServiceImpl>(TranslationServiceImpl);
   });
+
   describe('translationVariable', () => {
     it('Cache 에 존재하는 단어이면 변수명을 Cache에서 return', async () => {
       wordCacheService.isWordCached.mockReturnValue(true);
@@ -54,6 +55,7 @@ describe('TranslationService', () => {
       expect(wordCacheService.getCachedVariable).toHaveBeenCalledWith(
         '사용자ID를 유효성 검사하다',
       );
+      expect(requestTranslation.translateVariable).not.toHaveBeenCalled();
     });
   });
 });
