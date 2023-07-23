@@ -58,4 +58,24 @@ describe('TranslationService', () => {
       expect(requestTranslation.translateVariable).not.toHaveBeenCalled();
     });
   });
+
+  it('Cache 에 존재하지 않는 단어 일때, 번역 API를 호출후 Cache에 저장', async () => {
+    wordCacheService.isWordCached.mockReturnValue(false);
+    requestTranslation.translateVariable.mockResolvedValue('validateUserId');
+
+    const result = await service.translateVariable(
+      '사용자ID를 유효성 검사하다',
+      'test-user',
+    );
+
+    expect(result).toBe('validateUserId');
+    expect(wordCacheService.getCachedVariable).not.toHaveBeenCalled();
+    expect(requestTranslation.translateVariable).toHaveBeenCalledWith(
+      '사용자ID를 유효성 검사하다',
+    );
+    expect(wordCacheService.setWordCached).toHaveBeenCalledWith(
+      '사용자ID를 유효성 검사하다',
+      'validateUserId',
+    );
+  });
 });
