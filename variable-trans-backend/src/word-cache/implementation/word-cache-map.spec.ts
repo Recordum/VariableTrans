@@ -1,7 +1,15 @@
 import { WordCacheMapService } from './word-cache-map.service';
+import { Test, TestingModule } from '@nestjs/testing';
 
 describe('WordCacheMapService', () => {
-  const service: WordCacheMapService = new WordCacheMapService();
+  let service: WordCacheMapService = new WordCacheMapService();
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [WordCacheMapService],
+    }).compile();
+
+    service = module.get<WordCacheMapService>(WordCacheMapService);
+  });
 
   it('should set and get cached word', () => {
     service.setWordCached('안녕', 'hello');
