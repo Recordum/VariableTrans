@@ -7,7 +7,7 @@ export class RequestTranslationImpl implements RequestTranslation {
   constructor(private httpService: HttpService) {}
 
   public async translateVariable(korean: string): Promise<string> {
-    const api_url = 'https://openapi.naver.com/v1/papago/n2mt';
+    const api_url = OPEN_API;
 
     const headers = {
       'X-Naver-Client-Id': process.env.CLIENT_ID,
