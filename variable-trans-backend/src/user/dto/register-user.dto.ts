@@ -1,5 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
 import { User } from '../entity/user.entity';
+import * as bcrypt from 'bcrypt';
 
 export class RegisterUserDto {
   @IsNotEmpty()
@@ -13,5 +14,9 @@ export class RegisterUserDto {
     user.passowrd = this.password;
     user.userEmail = this.userEmail;
     return user;
+  }
+
+  public async encodePassword(): Promise<void> {
+    this.password = await bcrypt.hash(this.password, 10);
   }
 }
