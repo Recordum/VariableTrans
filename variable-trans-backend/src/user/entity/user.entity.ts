@@ -11,6 +11,6 @@ export class User {
   @Column({ name: 'password', type: 'varchar', length: '64' })
   passowrd: string;
 
-  @Column({ name: 'premium', type: 'varchar', length: '10' })
+  @Column({ name: 'premium', type: 'varchar', length: '10', default: 'normal' })
   premium: string;
 }
