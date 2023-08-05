@@ -11,6 +11,9 @@ export class User {
   @Column({ name: 'password', type: 'varchar', length: '64' })
   passowrd: string;
 
+  @Column({ name: 'request_limit', type: 'int', default: 0 })
+  requestLimit: number;
+
   @Column({ name: 'premium', type: 'varchar', length: '10', default: 'normal' })
   premium: string;
 }
