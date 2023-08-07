@@ -1,16 +1,17 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { UserRepository } from './user.repository';
 import { User } from './entity/user.entity';
 import { LoginUserDto } from './dto/login-user.dto';
-import * as crypto from 'crypto';
 import { SessionService } from './session/session.service';
+import * as bcrypt from 'bcrypt';
+import { SetSessionDto } from './session/dto/set-session.dto';
 
 @Injectable()
 export class UserService {
   constructor(
-    private readonly userRepository: UserRepository,
-    private readonly sessionService: SessionService,
+    @Inject('UserRepository') private readonly userRepository: UserRepository,
+    @Inject('SessionService') private readonly sessionService: SessionService,
   ) {}
 
   public async registerUser(registerUserDto: RegisterUserDto) {
@@ -29,23 +30,31 @@ export class UserService {
     return false;
   }
 
-  public async login(loginUserDto: LoginUserDto): Promise<string> {
+  public async login(loginUserDto: LoginUserDto): Promise<User> {
     const user: User = await this.userRepository.findUserByEmail(
       loginUserDto.getUserEmail(),
     );
     if (
       !user ||
-      !this.validatePassword(loginUserDto.getPassword(), user.passowrd)
+      !(await this.validatePassword(loginUserDto.getPassword(), user.password))
     ) {
       throw new UnauthorizedException('잘못된 Email 혹은 비밀번호 입니다.');
     }
-
-    const sessionId = crypto.randomBytes(32).toString('hex');
-    this.sessionService.setSessionData(sessionId, user);
-    return sessionId;
+    return user;
   }
 
-  private validatePassword(loginPassword: string, password: string): boolean {
-    return loginPassword === password;
+  public async setSession(sessionDto: SetSessionDto): Promise<string> {
+    await this.sessionService.setSessionData(
+      sessionDto.getSessionId(),
+      sessionDto.getUser(),
+    );
+    return sessionDto.getSessionId();
+  }
+
+  private validatePassword(
+    loginPassword: string,
+    password: string,
+  ): Promise<boolean> {
+    return bcrypt.compare(loginPassword, password);
   }
 }
