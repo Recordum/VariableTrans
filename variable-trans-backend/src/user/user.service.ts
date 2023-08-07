@@ -30,7 +30,9 @@ export class UserService {
     return false;
   }
 
-  public async login(loginUserDto: LoginUserDto): Promise<User> {
+  public async validateUserCredentials(
+    loginUserDto: LoginUserDto,
+  ): Promise<User> {
     const user: User = await this.userRepository.findUserByEmail(
       loginUserDto.getUserEmail(),
     );
