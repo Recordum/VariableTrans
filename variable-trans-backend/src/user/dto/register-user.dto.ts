@@ -9,9 +9,13 @@ export class RegisterUserDto {
   @IsNotEmpty()
   private password: string;
 
+  constructor(userEmail: string, password: string) {
+    this.userEmail = userEmail;
+    this.password = password;
+  }
   public toEntity(): User {
     const user: User = new User();
-    user.passowrd = this.password;
+    user.password = this.password;
     user.userEmail = this.userEmail;
     return user;
   }

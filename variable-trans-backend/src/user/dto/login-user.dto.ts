@@ -7,6 +7,10 @@ export class LoginUserDto {
   @IsNotEmpty()
   private password: string;
 
+  constructor(userEmail: string, passowrd: string) {
+    this.password = passowrd;
+    this.userEmail = userEmail;
+  }
   public getUserEmail(): string {
     return this.userEmail;
   }
