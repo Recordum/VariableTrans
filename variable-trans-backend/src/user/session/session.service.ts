@@ -1,7 +1,7 @@
-import { User } from '../entity/user.entity';
+import { SetSessionDto } from './dto/set-session.dto';
 
 export interface SessionService {
   getSessionData(sessionId: string): Promise<string>;
-  setSessionData(sessionId: string, user: User): Promise<void>;
+  setSessionData(setSessionDto: SetSessionDto): Promise<void>;
   deleteSessionData(): Promise<void>;
 }
