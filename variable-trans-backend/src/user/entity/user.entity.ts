@@ -9,7 +9,7 @@ export class User {
   userEmail: string;
 
   @Column({ name: 'password', type: 'varchar', length: '64' })
-  passowrd: string;
+  password: string;
 
   @Column({ name: 'request_limit', type: 'int', default: 0 })
   requestLimit: number;
