@@ -6,6 +6,7 @@ import { LoginUserDto } from './dto/login-user.dto';
 import { SessionService } from './session/session.service';
 import * as bcrypt from 'bcrypt';
 import { SetSessionDto } from './session/dto/set-session.dto';
+import { ValidatedUserDto } from './dto/validated-user.dto';
 
 @Injectable()
 export class UserService {
@@ -32,7 +33,7 @@ export class UserService {
 
   public async validateUserCredentials(
     loginUserDto: LoginUserDto,
-  ): Promise<User> {
+  ): Promise<ValidatedUserDto> {
     const user: User = await this.userRepository.findUserByEmail(
       loginUserDto.getUserEmail(),
     );
@@ -42,15 +43,12 @@ export class UserService {
     ) {
       throw new UnauthorizedException('잘못된 Email 혹은 비밀번호 입니다.');
     }
-    return user;
+    return new ValidatedUserDto(user);
   }
 
-  public async setSession(sessionDto: SetSessionDto): Promise<string> {
-    await this.sessionService.setSessionData(
-      sessionDto.getSessionId(),
-      sessionDto.getUser(),
-    );
-    return sessionDto.getSessionId();
+  public async setSession(setSessionDto: SetSessionDto): Promise<string> {
+    await this.sessionService.setSessionData(setSessionDto);
+    return setSessionDto.getSessionId();
   }
 
   private validatePassword(
