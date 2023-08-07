@@ -14,6 +14,6 @@ export class User {
   @Column({ name: 'request_limit', type: 'int', default: 0 })
   requestLimit: number;
 
-  @Column({ name: 'premium', type: 'varchar', length: '10', default: 'normal' })
-  premium: string;
+  @Column({ name: 'grade', type: 'varchar', length: '10', default: 'normal' })
+  grade: string;
 }
