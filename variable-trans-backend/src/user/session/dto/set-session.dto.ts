@@ -1,34 +1,56 @@
-import { User } from 'src/user/entity/user.entity';
-
 export class SetSessionDto {
-  private readonly sessionId: string;
-  private readonly user: User;
+  private sessionId: string;
+  private userId: string;
+  private grade: string;
+  private requestLimit: number;
 
   public constructor(builder: SetSessionDtoBuilder) {
     this.sessionId = builder.sessionId;
-    this.user = builder.user;
+    this.userId = builder.userId;
+    this.grade = builder.grade;
+    this.requestLimit = builder.requestLimit;
   }
 
   public getSessionId(): string {
     return this.sessionId;
   }
 
-  public getUser(): User {
-    return this.user;
+  public getUserId(): string {
+    return this.userId;
+  }
+
+  public getGrade(): string {
+    return this.grade;
+  }
+
+  public getRequestLimit(): number {
+    return this.requestLimit;
   }
 }
 
 export class SetSessionDtoBuilder {
   public sessionId: string;
-  public user: User;
+  public userId: string;
+  public grade: string;
+  public requestLimit: number;
 
   public setSessionId(sessionId: string): this {
     this.sessionId = sessionId;
     return this;
   }
 
-  public setUser(user: User): this {
-    this.user = user;
+  public setUserId(userId: string): this {
+    this.userId = userId;
+    return this;
+  }
+
+  public setGrade(grade: string): this {
+    this.grade = grade;
+    return this;
+  }
+
+  public setRequestLimit(requestLimit: number): this {
+    this.requestLimit = requestLimit;
     return this;
   }
 
