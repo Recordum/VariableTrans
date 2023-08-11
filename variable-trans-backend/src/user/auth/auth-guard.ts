@@ -13,13 +13,12 @@ import {
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
-    @Inject('SessionService3') private readonly session: SessionService,
+    @Inject('SessionService') private readonly session: SessionService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const sessionId = request.headers['x-session-id'];
-
+    const sessionId = request.headers['sessionid'];
     if (!sessionId) {
       return false;
     }
