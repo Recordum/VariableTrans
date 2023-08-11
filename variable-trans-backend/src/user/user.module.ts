@@ -6,6 +6,7 @@ import { User } from './entity/user.entity';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-ioredis';
 import { RedisSessionService } from './session/implementation/redis-sessoin.service';
+import { MySqlUserRepository } from './repository/implementation/mysql.user.repoistory';
 
 @Module({
   imports: [
@@ -21,6 +22,10 @@ import { RedisSessionService } from './session/implementation/redis-sessoin.serv
     {
       provide: 'SessionService',
       useClass: RedisSessionService,
+    },
+    {
+      provide: 'UserRepository',
+      useClass: MySqlUserRepository,
     },
   ],
   controllers: [UserController],
