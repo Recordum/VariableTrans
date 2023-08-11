@@ -1,4 +1,10 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { UserRepository } from './repository/user.repository';
 import { User } from './entity/user.entity';
@@ -7,6 +13,7 @@ import { SessionService } from './session/session.service';
 import * as bcrypt from 'bcrypt';
 import { SetSessionDto } from './session/dto/set-session.dto';
 import { ValidatedUserDto } from './dto/validated-user.dto';
+import { MySqlUserRepository } from './repository/implementation/mysql.user.repoistory';
 
 @Injectable()
 export class UserService {
@@ -16,9 +23,15 @@ export class UserService {
   ) {}
 
   public async registerUser(registerUserDto: RegisterUserDto) {
+    if (await this.isEmailAlreadyRegistered(registerUserDto.getUserEmail())) {
+      throw new HttpException(
+        '이미 존재하는 이메일입니다',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     await registerUserDto.encodePassword();
     const user: User = registerUserDto.toEntity();
-    this.userRepository.save(user);
+    this.userRepository.saveUser(user);
   }
 
   public async isEmailAlreadyRegistered(userEmail: string): Promise<boolean> {
