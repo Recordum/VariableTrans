@@ -1,5 +1,5 @@
 import { SessionService } from './session/session.service';
-import { UserRepository } from './user.repository';
+import { UserRepository } from './repository/user.repository';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
 import { RegisterUserDto } from './dto/register-user.dto';
