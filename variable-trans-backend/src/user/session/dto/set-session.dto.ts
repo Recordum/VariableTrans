@@ -1,7 +1,13 @@
+import { Exclude, Expose } from 'class-transformer';
+
 export class SetSessionDto {
+  @Exclude()
   private sessionId: string;
+  @Expose()
   private userId: string;
+  @Expose()
   private grade: string;
+  @Expose()
   private requestLimit: number;
 
   public constructor(builder: SetSessionDtoBuilder) {
