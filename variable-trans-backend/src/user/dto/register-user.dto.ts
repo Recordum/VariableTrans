@@ -23,4 +23,8 @@ export class RegisterUserDto {
   public async encodePassword(): Promise<void> {
     this.password = await bcrypt.hash(this.password, 10);
   }
+
+  public getUserEmail(): string {
+    return this.userEmail;
+  }
 }
