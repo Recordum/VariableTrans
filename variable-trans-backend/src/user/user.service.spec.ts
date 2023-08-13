@@ -50,7 +50,7 @@ describe('UserService', () => {
     USER_EMAIL = 'mingyu@example.com';
   });
   describe('registerUser', () => {
-    it('회원가입시 Repository에 등록됨', async () => {
+    it('회원가입시 Repository에 저장됨', async () => {
       const reigsterUserDto = new RegisterUserDto(USER_EMAIL, PASSWORD);
 
       await service.registerUser(reigsterUserDto);
@@ -64,7 +64,7 @@ describe('UserService', () => {
       expect(isPasswordMatch).toBeTruthy();
     });
 
-    it('중복 Email 회원가입시 Error', async () => {
+    it('중복 Email 회원가입시 Error 발생', async () => {
       const user = new User();
       user.userEmail = USER_EMAIL;
       userRepository.saveUser(user);
@@ -78,7 +78,7 @@ describe('UserService', () => {
   });
 
   describe('validateUserCredentials', () => {
-    it('주어진 Email로 가입된 회원이 존재하지 않을 경우', async () => {
+    it('주어진 Email로 가입된 회원이 존재하지 않을 경우 UnauthorizedException 발생', async () => {
       const user = new User();
       user.userEmail = USER_EMAIL;
       user.password = await bcrypt.hash(PASSWORD, 10);
@@ -94,7 +94,7 @@ describe('UserService', () => {
       ).rejects.toThrowError(UnauthorizedException);
     });
 
-    it('주어진 Email로 가입된 회원이 존재하나 비밀번호가 틀린경우', async () => {
+    it('주어진 Email로 가입된 회원이 존재하나 비밀번호가 틀린경우 UnauthorizedException 발생', async () => {
       const user = new User();
       user.userEmail = USER_EMAIL;
       user.password = await bcrypt.hash(PASSWORD, 10);
