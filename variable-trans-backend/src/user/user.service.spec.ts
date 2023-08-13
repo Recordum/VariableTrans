@@ -8,17 +8,29 @@ import { LoginUserDto } from './dto/login-user.dto';
 import { UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
+class MockUserRepository implements UserRepository {
+  public users: User[] = [];
+
+  async saveUser(user: User): Promise<void> {
+    this.users.push(user);
+  }
+
+  async findUserById(id: string): Promise<User> {
+    return this.users.find((user) => user.Id === id);
+  }
+
+  async findUserByEmail(userEmail: string): Promise<User> {
+    return this.users.find((user) => user.userEmail === userEmail);
+  }
+}
 describe('UserService', () => {
   let service: UserService;
-  let userRepository: jest.Mocked<Partial<UserRepository>>;
+  let userRepository: MockUserRepository;
   let sessionService: jest.Mocked<Partial<SessionService>>;
+  let USER_EMAIL: string;
+  let PASSWORD: string;
 
   beforeEach(async () => {
-    userRepository = {
-      saveUser: jest.fn(),
-      findUserByEmail: jest.fn(),
-    };
-
     sessionService = {
       setSessionData: jest.fn(),
       deleteSessionData: jest.fn(),
@@ -27,73 +39,84 @@ describe('UserService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserService,
-        { provide: 'UserRepository', useValue: userRepository },
+        { provide: 'UserRepository', useClass: MockUserRepository },
         { provide: 'SessionService', useValue: sessionService },
       ],
     }).compile();
 
     service = module.get<UserService>(UserService);
+    userRepository = module.get<MockUserRepository>('UserRepository');
+    PASSWORD = 'testPassword';
+    USER_EMAIL = 'mingyu@example.com';
   });
   describe('registerUser', () => {
-    it('회원가입 테스트', async () => {
-      const dto = new RegisterUserDto('mingyu@example.com', 'testPassword');
-      await dto.encodePassword();
-      const user = dto.toEntity();
+    it('회원가입시 Repository에 등록됨', async () => {
+      const reigsterUserDto = new RegisterUserDto(USER_EMAIL, PASSWORD);
 
-      await service.registerUser(dto);
+      await service.registerUser(reigsterUserDto);
 
-      expect(userRepository.saveUser).toHaveBeenCalled();
+      const savedUser: User = await userRepository.findUserByEmail(USER_EMAIL);
+      const isPasswordMatch = await bcrypt.compare(
+        PASSWORD,
+        savedUser.password,
+      );
+      expect(savedUser.userEmail).toBe(USER_EMAIL);
+      expect(isPasswordMatch).toBeTruthy();
     });
+
     it('중복 Email 회원가입시 Error', async () => {
       const user = new User();
-      userRepository.findUserByEmail.mockResolvedValue(user);
-      const dto = new RegisterUserDto('mingyu@example.com', 'testPassword');
+      user.userEmail = USER_EMAIL;
+      userRepository.saveUser(user);
 
-      await expect(service.registerUser(dto)).rejects.toThrowError();
+      const registerUserDto = new RegisterUserDto(USER_EMAIL, PASSWORD);
+
+      await expect(
+        service.registerUser(registerUserDto),
+      ).rejects.toThrowError();
     });
   });
+
   describe('validateUserCredentials', () => {
     it('주어진 Email로 가입된 회원이 존재하지 않을 경우', async () => {
-      const storedUser = new User();
-      storedUser.userEmail = 'known@example.com';
-      storedUser.password = await bcrypt.hash('correctPassword', 10);
-      userRepository.findUserByEmail.mockResolvedValue(storedUser);
+      const user = new User();
+      user.userEmail = USER_EMAIL;
+      user.password = await bcrypt.hash(PASSWORD, 10);
+      userRepository.saveUser(user);
+
       const loginUserDto = new LoginUserDto(
         'unknown@example.com',
-        'testPassword',
+        'wrongPassword',
       );
 
       await expect(
         service.validateUserCredentials(loginUserDto),
       ).rejects.toThrowError(UnauthorizedException);
     });
+
     it('주어진 Email로 가입된 회원이 존재하나 비밀번호가 틀린경우', async () => {
-      const storedUser = new User();
-      storedUser.userEmail = 'known@example.com';
-      storedUser.password = await bcrypt.hash('correctPassword', 10);
-      userRepository.findUserByEmail.mockResolvedValue(storedUser);
-      const loginUserDto = new LoginUserDto(
-        'known@example.com',
-        'wrongPassword',
-      );
+      const user = new User();
+      user.userEmail = USER_EMAIL;
+      user.password = await bcrypt.hash(PASSWORD, 10);
+      userRepository.saveUser(user);
+
+      const loginUserDto = new LoginUserDto(USER_EMAIL, 'wrongPassword');
 
       await expect(
         service.validateUserCredentials(loginUserDto),
       ).rejects.toThrow(UnauthorizedException);
     });
-    it('Email 비밀번호가 전부 맞은 경우 로그인 성공', async () => {
-      const storedUser = new User();
-      storedUser.userEmail = 'known@example.com';
-      storedUser.password = await bcrypt.hash('correctPassword', 10);
-      userRepository.findUserByEmail.mockResolvedValue(storedUser);
-      const loginUserDto = new LoginUserDto(
-        'known@example.com',
-        'correctPassword',
-      );
+    it('Email 비밀번호가 전부 맞은 경우 Reposiotry에 저장된 user의 id 변환', async () => {
+      const user = new User();
+      user.userEmail = USER_EMAIL;
+      user.password = await bcrypt.hash(PASSWORD, 10);
+      userRepository.saveUser(user);
+      const loginUserDto = new LoginUserDto(USER_EMAIL, PASSWORD);
 
       const result = await service.validateUserCredentials(loginUserDto);
 
-      expect(result.getUserId()).toBe(storedUser.Id);
+      const foundUser = await userRepository.findUserByEmail(USER_EMAIL);
+      expect(result.getUserId()).toBe(foundUser.Id);
     });
   });
 });
