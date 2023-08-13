@@ -8,14 +8,14 @@ import { LoginUserDto } from './dto/login-user.dto';
 import { UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
-describe('TranslationService', () => {
+describe('UserService', () => {
   let service: UserService;
   let userRepository: jest.Mocked<Partial<UserRepository>>;
   let sessionService: jest.Mocked<Partial<SessionService>>;
 
   beforeEach(async () => {
     userRepository = {
-      save: jest.fn(),
+      saveUser: jest.fn(),
       findUserByEmail: jest.fn(),
     };
 
@@ -42,7 +42,14 @@ describe('TranslationService', () => {
 
       await service.registerUser(dto);
 
-      expect(userRepository.save).toHaveBeenCalled();
+      expect(userRepository.saveUser).toHaveBeenCalled();
+    });
+    it('중복 Email 회원가입시 Error', async () => {
+      const user = new User();
+      userRepository.findUserByEmail.mockResolvedValue(user);
+      const dto = new RegisterUserDto('mingyu@example.com', 'testPassword');
+
+      await expect(service.registerUser(dto)).rejects.toThrowError();
     });
   });
   describe('validateUserCredentials', () => {
