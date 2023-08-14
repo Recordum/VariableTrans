@@ -1,80 +1,50 @@
-import { WordCacheService } from 'src/word-cache/word-cache.service';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Translator } from './translator/translator';
 import { TranslationService } from './translation.service';
-import { Translator } from './request-translation/translator';
+import { Test, TestingModule } from '@nestjs/testing';
 
-describe('TranslationService', () => {
+describe('translationService', () => {
   let service: TranslationService;
+  let wordService: jest.Mocked<WordService>;
   let translator: jest.Mocked<Translator>;
-  let wordCacheService: jest.Mocked<WordCacheService>;
 
   beforeEach(async () => {
+    wordService = {
+      findWord: jest.fn(),
+      saveWord: jest.fn(),
+    };
     translator = {
       translateVariable: jest.fn(),
-    };
-
-    wordCacheService = {
-      isWordCached: jest.fn(),
-      getCachedVariable: jest.fn(),
-      setWordCached: jest.fn(),
-      deleteWordCached: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         TranslationService,
-        {
-          provide: 'Translator',
-          useValue: translator,
-        },
-        {
-          provide: 'WordCacheService',
-          useValue: wordCacheService,
-        },
+        { provide: 'WordService', useValue: wordService },
+        { provide: 'Translator', useValue: translator },
       ],
     }).compile();
 
     service = module.get<TranslationService>(TranslationService);
   });
+  describe('translateVariable', () => {
+    it('wordService 에 word가 있을 시 WordService에서 반환', async () => {
+      wordService.findWord.mockResolvedValue('hello');
 
-  describe('translationVariable', () => {
-    it('Cache 에 존재하는 단어이면 변수명을 Cache에서 return', async () => {
-      wordCacheService.isWordCached.mockReturnValue(true);
-      wordCacheService.getCachedVariable.mockReturnValue('validateUserId');
+      const result = await service.translateVariable('안녕');
 
-      const result = await service.translateVariable(
-        '사용자ID를 유효성 검사하다',
-        'test-user',
-      );
-
-      expect(result).toBe('validateUserId');
-      expect(wordCacheService.isWordCached).toHaveBeenCalledWith(
-        '사용자ID를 유효성 검사하다',
-      );
-      expect(wordCacheService.getCachedVariable).toHaveBeenCalledWith(
-        '사용자ID를 유효성 검사하다',
-      );
+      expect(result).toBe('hello');
       expect(translator.translateVariable).not.toHaveBeenCalled();
     });
-  });
 
-  it('Cache 에 존재하지 않는 단어 일때, 번역 API를 호출후 Cache에 저장', async () => {
-    wordCacheService.isWordCached.mockReturnValue(false);
-    translator.translateVariable.mockResolvedValue('validateUserId');
+    it('wordService 에 word가 없을시 translaotr에서 반환', async () => {
+      wordService.findWord.mockResolvedValue(undefined);
+      translator.translateVariable.mockResolvedValue('hello');
 
-    const result = await service.translateVariable(
-      '사용자ID를 유효성 검사하다',
-      'test-user',
-    );
+      const result = await service.translateVariable('안녕');
 
-    expect(result).toBe('validateUserId');
-    expect(wordCacheService.getCachedVariable).not.toHaveBeenCalled();
-    expect(translator.translateVariable).toHaveBeenCalledWith(
-      '사용자ID를 유효성 검사하다',
-    );
-    expect(wordCacheService.setWordCached).toHaveBeenCalledWith(
-      '사용자ID를 유효성 검사하다',
-      'validateUserId',
-    );
+      expect(result).toBe('hello');
+      expect(wordService.findWord).toHaveBeenCalledWith('안녕');
+      expect(translator.translateVariable).toHaveBeenCalledWith('안녕');
+    });
   });
 });
