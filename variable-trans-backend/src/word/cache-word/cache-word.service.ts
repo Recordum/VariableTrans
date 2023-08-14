@@ -1,6 +1,6 @@
 export interface CacheWordService {
-  setWordCached(koreanWord: string, variable: string): void;
-  deleteWordCached(koreanWord: string): void;
-  getCachedVariable(koreanWord: string): string;
-  isWordCached(koreanWord: string): boolean;
+  setWord(korean: string, word: string): void;
+  deleteWord(korean: string): void;
+  getWord(korean: string): string;
+  isCachedWord(korean: string): boolean;
 }

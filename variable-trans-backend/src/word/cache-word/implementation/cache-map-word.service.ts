@@ -3,27 +3,27 @@ import { CacheWordService } from '../cache-word.service';
 
 @Injectable()
 export class CacheMapWordService implements CacheWordService {
-  private variableMap: Map<string, string> = new Map();
+  private wordMap: Map<string, string> = new Map();
 
-  public getCachedVariable(koreanWord: string): string {
-    if (!this.isWordCached(koreanWord)) {
+  public getWord(korean: string): string {
+    if (!this.isCachedWord(korean)) {
       throw new Error('not cached word');
     }
-    return this.variableMap.get(koreanWord);
+    return this.wordMap.get(korean);
   }
 
-  public isWordCached(koreanWord: string): boolean {
-    return this.variableMap.has(koreanWord);
+  public isCachedWord(korean: string): boolean {
+    return this.wordMap.has(korean);
   }
 
-  public setWordCached(koreanWord: string, variable: string): void {
-    this.variableMap.set(koreanWord, variable);
+  public setWord(korean: string, word: string): void {
+    this.wordMap.set(korean, word);
   }
 
-  public deleteWordCached(koreanWord: string): void {
-    if (!this.isWordCached(koreanWord)) {
+  public deleteWord(koreanWord: string): void {
+    if (!this.isCachedWord(koreanWord)) {
       throw new Error('can not delete word');
     }
-    this.variableMap.delete(koreanWord);
+    this.wordMap.delete(koreanWord);
   }
 }
