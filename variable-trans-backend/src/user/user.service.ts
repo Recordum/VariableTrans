@@ -13,7 +13,6 @@ import { SessionService } from './session/session.service';
 import * as bcrypt from 'bcrypt';
 import { SetSessionDto } from './session/dto/set-session.dto';
 import { ValidatedUserDto } from './dto/validated-user.dto';
-import { MySqlUserRepository } from './repository/implementation/mysql.user.repoistory';
 
 @Injectable()
 export class UserService {
@@ -34,7 +33,7 @@ export class UserService {
     this.userRepository.saveUser(user);
   }
 
-  public async isEmailAlreadyRegistered(userEmail: string): Promise<boolean> {
+  private async isEmailAlreadyRegistered(userEmail: string): Promise<boolean> {
     const existingUser: User = await this.userRepository.findUserByEmail(
       userEmail,
     );
@@ -59,15 +58,15 @@ export class UserService {
     return new ValidatedUserDto(user);
   }
 
-  public async setSession(setSessionDto: SetSessionDto): Promise<string> {
-    await this.sessionService.setSessionData(setSessionDto);
-    return setSessionDto.getSessionId();
-  }
-
-  private validatePassword(
+  private async validatePassword(
     loginPassword: string,
     password: string,
   ): Promise<boolean> {
-    return bcrypt.compare(loginPassword, password);
+    return await bcrypt.compare(loginPassword, password);
+  }
+
+  public async setSession(setSessionDto: SetSessionDto): Promise<string> {
+    await this.sessionService.setSessionData(setSessionDto);
+    return setSessionDto.getSessionId();
   }
 }
