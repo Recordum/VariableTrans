@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { WordCacheService } from '../word-cache.service';
+import { CacheWordService } from '../cache-word.service';
 
 @Injectable()
-export class WordCacheMapService implements WordCacheService {
+export class CacheMapWordService implements CacheWordService {
   private variableMap: Map<string, string> = new Map();
 
   public getCachedVariable(koreanWord: string): string {
