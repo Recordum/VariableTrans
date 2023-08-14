@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { WordService } from './word.service';
+import { WordServiceImpl } from './word.service.impl';
 import { CacheMapWordService } from './cache-word/implementation/cache-map-word.service';
 
 describe('WordService', () => {
-  let service: WordService;
+  let service: WordServiceImpl;
   let wordRepository: jest.Mocked<WordRepository>;
   let cacheWordService: CacheMapWordService;
   let KOREAN: string;
@@ -16,13 +16,13 @@ describe('WordService', () => {
     };
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        WordService,
+        WordServiceImpl,
         { provide: 'CacheWordService', useClass: CacheMapWordService },
         { provide: 'WordRepository', useValue: wordRepository },
       ],
     }).compile();
 
-    service = module.get<WordService>(WordService);
+    service = module.get<WordServiceImpl>(WordServiceImpl);
     cacheWordService = module.get<CacheMapWordService>('CacheWordService');
     KOREAN = '사용자';
     WORD = 'User';
