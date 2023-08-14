@@ -14,4 +14,8 @@ export class WordService {
     }
     return this.wordRepository.findWordByKorean(korean);
   }
+
+  public async saveWord(korean: string, word: string): Promise<void> {
+    await this.wordRepository.saveWord(korean, word);
+  }
 }
