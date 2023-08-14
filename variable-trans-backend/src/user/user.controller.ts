@@ -7,9 +7,10 @@ import {
   SetSessionDtoBuilder,
 } from './session/dto/set-session.dto';
 import { UserService } from './user.service';
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import * as crypto from 'crypto';
 import { ResponseSessionIdDto } from './session/dto/response-session.dto';
+import { AuthGuard } from './auth/auth-guard';
 
 @Controller('user')
 export class UserController {
@@ -37,6 +38,14 @@ export class UserController {
 
     return new ResponseSessionIdDto(
       await this.userSerivce.setSession(setSessionDto),
+    );
+  }
+
+  @Post('logout')
+  @UseGuards(AuthGuard)
+  public async logout(@Req() sessionData: SetSessionDto) {
+    await this.userSerivce.updateRequestLimitAndSession(
+      sessionData.getSessionId(),
     );
   }
 }
