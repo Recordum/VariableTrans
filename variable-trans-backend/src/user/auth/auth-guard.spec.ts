@@ -21,10 +21,10 @@ export class MockSessionService implements SessionService {
 describe('AuthGuard: canActivate()', () => {
   let service: AuthGuard;
   let sessionService: MockSessionService;
-  let LIMIT;
-  let GRADE;
-  let USER_ID;
-  let SESSION_ID;
+  let LIMIT: number;
+  let GRADE: string;
+  let USER_ID: string;
+  let SESSION_ID: string;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -96,7 +96,7 @@ describe('AuthGuard: canActivate()', () => {
     const setSessionDto = new SetSessionDtoBuilder()
       .setGrade(GRADE)
       .setSessionId(SESSION_ID)
-      .setRequestLimit(20)
+      .setRequestLimit(LIMIT)
       .setUserId(USER_ID)
       .build();
     sessionService.setSessionData(setSessionDto);
