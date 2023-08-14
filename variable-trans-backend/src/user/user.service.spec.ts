@@ -7,6 +7,7 @@ import { User } from './entity/user.entity';
 import { LoginUserDto } from './dto/login-user.dto';
 import { UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { ValidatedUserDto } from './dto/validated-user.dto';
 
 class MockUserRepository implements UserRepository {
   public users: User[] = [];
@@ -106,17 +107,24 @@ describe('UserService', () => {
         service.validateUserCredentials(loginUserDto),
       ).rejects.toThrow(UnauthorizedException);
     });
-    it('Email 비밀번호가 전부 맞은 경우 Reposiotry에 저장된 user의 id 변환', async () => {
+
+    it('Email 비밀번호가 전부 맞은 경우 Reposiotry에 저장된 user의 validtedUserDto 반환', async () => {
       const user = new User();
       user.userEmail = USER_EMAIL;
       user.password = await bcrypt.hash(PASSWORD, 10);
+      user.grade = 'normal';
+      user.requestLimit = 10;
       userRepository.saveUser(user);
       const loginUserDto = new LoginUserDto(USER_EMAIL, PASSWORD);
 
-      const result = await service.validateUserCredentials(loginUserDto);
-
+      const result: ValidatedUserDto = await service.validateUserCredentials(
+        loginUserDto,
+      );
       const foundUser = await userRepository.findUserByEmail(USER_EMAIL);
+
       expect(result.getUserId()).toBe(foundUser.Id);
+      expect(result.getGrade()).toBe(foundUser.grade);
+      expect(result.getRequestLimit()).toBe(foundUser.requestLimit);
     });
   });
 });
