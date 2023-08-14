@@ -6,7 +6,7 @@ export class CacheMapWordService implements CacheWordService {
   private wordMap: Map<string, string> = new Map();
 
   public async getWord(korean: string): Promise<string> {
-    if (!this.isCachedWord(korean)) {
+    if (!(await this.isCachedWord(korean))) {
       throw new Error('not cached word');
     }
     return this.wordMap.get(korean);
@@ -20,10 +20,10 @@ export class CacheMapWordService implements CacheWordService {
     this.wordMap.set(korean, word);
   }
 
-  public async deleteWord(koreanWord: string): Promise<void> {
-    if (!this.isCachedWord(koreanWord)) {
+  public async deleteWord(korean: string): Promise<void> {
+    if (!(await this.isCachedWord(korean))) {
       throw new Error('can not delete word');
     }
-    this.wordMap.delete(koreanWord);
+    this.wordMap.delete(korean);
   }
 }
