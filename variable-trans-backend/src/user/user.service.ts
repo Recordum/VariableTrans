@@ -69,4 +69,17 @@ export class UserService {
     await this.sessionService.setSessionData(setSessionDto);
     return setSessionDto.getSessionId();
   }
+
+  public async updateRequestLimitAndSession(sessionId: string): Promise<void> {
+    const sessionDto: SetSessionDto = await this.sessionService.getSessionData(
+      sessionId,
+    );
+    await Promise.all([
+      this.userRepository.updateRequestLimit(
+        sessionDto.getUserId(),
+        sessionDto.getRequestLimit(),
+      ),
+      this.sessionService.deleteSessionData(sessionId),
+    ]);
+  }
 }
