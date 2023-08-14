@@ -13,7 +13,7 @@ import {
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
-    @Inject('SessionService') private readonly session: SessionService,
+    @Inject('SessionService') private readonly sessionService: SessionService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -23,10 +23,9 @@ export class AuthGuard implements CanActivate {
       return false;
     }
 
-    const sessionData: SetSessionDto = await this.session.getSessionData(
+    const sessionData: SetSessionDto = await this.sessionService.getSessionData(
       sessionId,
     );
-
     if (!sessionData) {
       return false;
     }
@@ -61,7 +60,7 @@ export class AuthGuard implements CanActivate {
       .setRequestLimit(requestLimit)
       .build();
 
-    this.session.setSessionData(updateSessionData);
+    this.sessionService.setSessionData(updateSessionData);
     return updateSessionData;
   }
 
