@@ -1,4 +1,4 @@
-import { SessionService } from './session/session.service';
+import { SetSessionDtoBuilder } from './session/dto/set-session.dto';
 import { UserRepository } from './repository/user.repository';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
@@ -8,9 +8,22 @@ import { LoginUserDto } from './dto/login-user.dto';
 import { UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { ValidatedUserDto } from './dto/validated-user.dto';
+import { MockSessionService } from './auth/auth-guard.spec';
 
 class MockUserRepository implements UserRepository {
   public users: User[] = [];
+
+  async updateRequestLimit(id: string, requestLimit: number) {
+    const user = await this.findUserById(id);
+    user.requestLimit = requestLimit;
+    this.saveUser(user);
+  }
+
+  async updatePassword(id: string, password: string) {
+    const user = await this.findUserById(id);
+    user.password = password;
+    this.saveUser(user);
+  }
 
   async saveUser(user: User): Promise<void> {
     this.users.push(user);
@@ -27,26 +40,22 @@ class MockUserRepository implements UserRepository {
 describe('UserService', () => {
   let service: UserService;
   let userRepository: MockUserRepository;
-  let sessionService: jest.Mocked<Partial<SessionService>>;
+  let sessionService: MockSessionService;
   let USER_EMAIL: string;
   let PASSWORD: string;
 
   beforeEach(async () => {
-    sessionService = {
-      setSessionData: jest.fn(),
-      deleteSessionData: jest.fn(),
-    };
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserService,
         { provide: 'UserRepository', useClass: MockUserRepository },
-        { provide: 'SessionService', useValue: sessionService },
+        { provide: 'SessionService', useClass: MockSessionService },
       ],
     }).compile();
 
     service = module.get<UserService>(UserService);
     userRepository = module.get<MockUserRepository>('UserRepository');
+    sessionService = module.get<MockSessionService>('SessionService');
     PASSWORD = 'testPassword';
     USER_EMAIL = 'mingyu@example.com';
   });
@@ -125,6 +134,49 @@ describe('UserService', () => {
       expect(result.getUserId()).toBe(foundUser.Id);
       expect(result.getGrade()).toBe(foundUser.grade);
       expect(result.getRequestLimit()).toBe(foundUser.requestLimit);
+    });
+  });
+
+  describe('setSession', () => {
+    it('session을 session저장소에 저장 하고 sessionId를 반환', async () => {
+      const setSessionDto = new SetSessionDtoBuilder()
+        .setGrade('normal')
+        .setRequestLimit(10)
+        .setSessionId('testSessionId')
+        .setUserId('testUserId')
+        .build();
+      const result = await service.setSession(setSessionDto);
+
+      expect(result).toBe('testSessionId');
+      expect(await sessionService.getSessionData('testSessionId')).toBe(
+        setSessionDto,
+      );
+    });
+  });
+  describe('updateRequestLimitAndSession ', () => {
+    it('세션저장소에서 세션을 지우고 RequestLimit을 DB에 update', async () => {
+      const setSessionDto = new SetSessionDtoBuilder()
+        .setGrade('normal')
+        .setRequestLimit(10)
+        .setSessionId('testSessionId')
+        .setUserId('testUserId')
+        .build();
+      await service.setSession(setSessionDto);
+
+      const user = new User();
+      user.userEmail = USER_EMAIL;
+      user.requestLimit = 1;
+      user.Id = 'testUserId';
+      await userRepository.saveUser(user);
+
+      await service.updateRequestLimitAndSession('testSessionId');
+
+      const foundUser: User = await userRepository.findUserByEmail(USER_EMAIL);
+
+      expect(foundUser.requestLimit).toBe(10);
+      expect(
+        await sessionService.getSessionData('testSessionId'),
+      ).toBeUndefined();
     });
   });
 });
