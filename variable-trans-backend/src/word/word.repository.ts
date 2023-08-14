@@ -1,4 +1,4 @@
 interface WordRepository {
   findWordByKorean(korean: string): Promise<string>;
-  saveWord(word: string, korean: string): Promise<void>;
+  saveWord(korean: string, word: string): Promise<void>;
 }
