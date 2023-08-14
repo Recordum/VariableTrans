@@ -5,22 +5,22 @@ import { CacheWordService } from '../cache-word.service';
 export class CacheMapWordService implements CacheWordService {
   private wordMap: Map<string, string> = new Map();
 
-  public getWord(korean: string): string {
+  public async getWord(korean: string): Promise<string> {
     if (!this.isCachedWord(korean)) {
       throw new Error('not cached word');
     }
     return this.wordMap.get(korean);
   }
 
-  public isCachedWord(korean: string): boolean {
+  public async isCachedWord(korean: string): Promise<boolean> {
     return this.wordMap.has(korean);
   }
 
-  public setWord(korean: string, word: string): void {
+  public async setWord(korean: string, word: string): Promise<void> {
     this.wordMap.set(korean, word);
   }
 
-  public deleteWord(koreanWord: string): void {
+  public async deleteWord(koreanWord: string): Promise<void> {
     if (!this.isCachedWord(koreanWord)) {
       throw new Error('can not delete word');
     }
