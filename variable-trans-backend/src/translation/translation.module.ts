@@ -1,12 +1,12 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
-import { WordCacheModule } from 'src/word-cache/word-cache.module';
 import { TranslationController } from './translation.controller';
 import { TranslationService } from './translation.service';
-import { PaPagoTranslator } from './request-translation/implementation/papago-translator';
+import { PaPagoTranslator } from './translator/implementation/papago-translator';
+import { WordModule } from 'src/word/word.module';
 
 @Module({
-  imports: [HttpModule, WordCacheModule],
+  imports: [HttpModule, WordModule],
   providers: [
     {
       provide: 'Translator',
