@@ -1,10 +1,10 @@
 import { WordCacheService } from 'src/word-cache/word-cache.service';
-import { TranslationServiceImpl } from './implementation/translation.service.impl';
 import { RequestTranslation } from './request-translation/request-translation';
 import { Test, TestingModule } from '@nestjs/testing';
+import { TranslationService } from './translation.service';
 
 describe('TranslationService', () => {
-  let service: TranslationServiceImpl;
+  let service: TranslationService;
   let requestTranslation: jest.Mocked<RequestTranslation>;
   let wordCacheService: jest.Mocked<WordCacheService>;
 
@@ -23,7 +23,7 @@ describe('TranslationService', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        TranslationServiceImpl,
+        TranslationService,
         {
           provide: 'RequestTranslation',
           useValue: requestTranslation,
@@ -35,7 +35,7 @@ describe('TranslationService', () => {
       ],
     }).compile();
 
-    service = module.get<TranslationServiceImpl>(TranslationServiceImpl);
+    service = module.get<TranslationService>(TranslationService);
   });
 
   describe('translationVariable', () => {

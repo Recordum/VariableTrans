@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { WordCacheModule } from 'src/word-cache/word-cache.module';
 import { RequestTranslationImpl } from './request-translation/implementation/request-translation.impl';
 import { TranslationController } from './translation.controller';
-import { TranslationServiceImpl } from './implementation/translation.service.impl';
+import { TranslationService } from './translation.service';
 
 @Module({
   imports: [HttpModule, WordCacheModule],
@@ -12,10 +12,7 @@ import { TranslationServiceImpl } from './implementation/translation.service.imp
       provide: 'RequestTranslation',
       useClass: RequestTranslationImpl,
     },
-    {
-      provide: 'TranslationService',
-      useClass: TranslationServiceImpl,
-    },
+    TranslationService,
   ],
   controllers: [TranslationController],
 })
