@@ -1,6 +1,7 @@
 import { CacheWordService } from './cache-word/cache-word.service';
 import { Inject } from '@nestjs/common';
 import { WordService } from './word.service';
+import { WordRepository } from './word.repository';
 
 export class WordServiceImpl implements WordService {
   constructor(

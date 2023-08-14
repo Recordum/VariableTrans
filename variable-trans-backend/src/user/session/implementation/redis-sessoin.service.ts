@@ -3,7 +3,6 @@ import { SetSessionDto, SetSessionDtoBuilder } from '../dto/set-session.dto';
 import { SessionService } from '../session.service';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
-import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class RedisSessionService implements SessionService {

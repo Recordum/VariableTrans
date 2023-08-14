@@ -1,3 +1,3 @@
-interface RecommandVariable {
+export interface RecommandVariable {
   recommandVariables(): Promise<string[]>;
 }
