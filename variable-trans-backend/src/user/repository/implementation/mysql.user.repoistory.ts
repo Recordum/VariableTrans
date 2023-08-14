@@ -11,6 +11,16 @@ export class MySqlUserRepository
   constructor(private dataSource: DataSource) {
     super(User, dataSource.createEntityManager());
   }
+  public async updateRequestLimit(
+    id: string,
+    requestLimit: number,
+  ): Promise<void> {
+    await this.update(id, { requestLimit: requestLimit });
+  }
+
+  public async updatePassword(id: string, password: string): Promise<void> {
+    await this.update(id, { password: password });
+  }
 
   public async saveUser(user: User): Promise<void> {
     await this.save(user);
