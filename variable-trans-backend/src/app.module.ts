@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TranslationModule } from './translation/translation.module';
-import { WordCacheModule } from './word-cache/word-cache.module';
+import { WordModule } from './word/word.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfig } from './typeorm-config';
 import { UserModule } from './user/user.module';
@@ -8,7 +8,7 @@ import { UserModule } from './user/user.module';
 @Module({
   imports: [
     TranslationModule,
-    WordCacheModule,
+    WordModule,
     TypeOrmModule.forRoot(TypeOrmConfig),
     UserModule,
   ],
