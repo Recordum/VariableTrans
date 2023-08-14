@@ -1,6 +1,7 @@
 import { Translator } from './translator/translator';
 import { TranslationService } from './translation.service';
 import { Test, TestingModule } from '@nestjs/testing';
+import { WordService } from 'src/word/word.service';
 
 describe('translationService', () => {
   let service: TranslationService;

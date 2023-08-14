@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Translator } from './translator/translator';
+import { WordService } from 'src/word/word.service';
 
 @Injectable()
 export class TranslationService {
