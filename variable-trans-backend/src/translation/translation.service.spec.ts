@@ -1,17 +1,16 @@
 import { WordCacheService } from 'src/word-cache/word-cache.service';
-import { RequestTranslation } from './request-translation/request-translation';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TranslationService } from './translation.service';
+import { Translator } from './request-translation/translator';
 
 describe('TranslationService', () => {
   let service: TranslationService;
-  let requestTranslation: jest.Mocked<RequestTranslation>;
+  let translator: jest.Mocked<Translator>;
   let wordCacheService: jest.Mocked<WordCacheService>;
 
   beforeEach(async () => {
-    requestTranslation = {
+    translator = {
       translateVariable: jest.fn(),
-      recommandVariable: jest.fn(),
     };
 
     wordCacheService = {
@@ -25,8 +24,8 @@ describe('TranslationService', () => {
       providers: [
         TranslationService,
         {
-          provide: 'RequestTranslation',
-          useValue: requestTranslation,
+          provide: 'Translator',
+          useValue: translator,
         },
         {
           provide: 'WordCacheService',
@@ -55,13 +54,13 @@ describe('TranslationService', () => {
       expect(wordCacheService.getCachedVariable).toHaveBeenCalledWith(
         '사용자ID를 유효성 검사하다',
       );
-      expect(requestTranslation.translateVariable).not.toHaveBeenCalled();
+      expect(translator.translateVariable).not.toHaveBeenCalled();
     });
   });
 
   it('Cache 에 존재하지 않는 단어 일때, 번역 API를 호출후 Cache에 저장', async () => {
     wordCacheService.isWordCached.mockReturnValue(false);
-    requestTranslation.translateVariable.mockResolvedValue('validateUserId');
+    translator.translateVariable.mockResolvedValue('validateUserId');
 
     const result = await service.translateVariable(
       '사용자ID를 유효성 검사하다',
@@ -70,7 +69,7 @@ describe('TranslationService', () => {
 
     expect(result).toBe('validateUserId');
     expect(wordCacheService.getCachedVariable).not.toHaveBeenCalled();
-    expect(requestTranslation.translateVariable).toHaveBeenCalledWith(
+    expect(translator.translateVariable).toHaveBeenCalledWith(
       '사용자ID를 유효성 검사하다',
     );
     expect(wordCacheService.setWordCached).toHaveBeenCalledWith(

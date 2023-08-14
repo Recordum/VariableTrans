@@ -1,13 +1,13 @@
 import { HttpService } from '@nestjs/axios';
-import { RequestTranslation } from '../request-translation';
+import { Translator } from '../translator';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class RequestTranslationImpl implements RequestTranslation {
+export class PaPagoTranslator implements Translator {
   constructor(private httpService: HttpService) {}
 
   public async translateVariable(korean: string): Promise<string> {
-    const api_url = OPEN_API;
+    const api_url = process.env.PAPAGO_API;
 
     const headers = {
       'X-Naver-Client-Id': process.env.CLIENT_ID,
@@ -24,9 +24,5 @@ export class RequestTranslationImpl implements RequestTranslation {
       headers,
     });
     return response.data.message.result.translatedText;
-  }
-
-  public recommandVariable(contents: string): Promise<string> {
-    throw new Error('Method not implemented.');
   }
 }

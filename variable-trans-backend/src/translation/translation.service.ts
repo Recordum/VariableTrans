@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { RequestTranslation } from './request-translation/request-translation';
+import { Translator } from './request-translation/translator';
 import { WordCacheService } from 'src/word-cache/word-cache.service';
 
 @Injectable()
 export class TranslationService {
   constructor(
-    @Inject('RequestTranslation')
-    private readonly requestTranslation: RequestTranslation,
+    @Inject('Translator')
+    private readonly translator: Translator,
     @Inject('WordCacheService')
     private readonly wordCacheService: WordCacheService,
   ) {}
@@ -31,15 +31,13 @@ export class TranslationService {
     //   return variable;
     // }
 
-    const variable = await this.requestTranslation.translateVariable(
-      koreanVariable,
-    );
+    const variable = await this.translator.translateVariable(koreanVariable);
 
     this.wordCacheService.setWordCached(koreanVariable, variable);
     return variable;
   }
 
   public recommandVariable(contents: string, userId: string): Promise<string> {
-    return this.requestTranslation.recommandVariable(contents);
+    throw new Error('MUST IMPLEMNT ');
   }
 }
