@@ -10,8 +10,8 @@ describe('translationService', () => {
 
   beforeEach(async () => {
     wordService = {
-      findWord: jest.fn(),
-      saveWord: jest.fn(),
+      getVariable: jest.fn(),
+      saveVariable: jest.fn(),
     };
     translator = {
       translateVariable: jest.fn(),
@@ -29,7 +29,7 @@ describe('translationService', () => {
   });
   describe('translateVariable', () => {
     it('wordService 에 word가 있을 시 WordService에서 반환', async () => {
-      wordService.findWord.mockResolvedValue('hello');
+      wordService.getVariable.mockResolvedValue('hello');
 
       const result = await service.translateVariable('안녕');
 
@@ -38,13 +38,13 @@ describe('translationService', () => {
     });
 
     it('wordService 에 word가 없을시 translaotr에서 반환', async () => {
-      wordService.findWord.mockResolvedValue(undefined);
+      wordService.getVariable.mockResolvedValue(undefined);
       translator.translateVariable.mockResolvedValue('hello');
 
       const result = await service.translateVariable('안녕');
 
       expect(result).toBe('hello');
-      expect(wordService.findWord).toHaveBeenCalledWith('안녕');
+      expect(wordService.getVariable).toHaveBeenCalledWith('안녕');
       expect(translator.translateVariable).toHaveBeenCalledWith('안녕');
     });
   });

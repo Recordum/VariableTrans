@@ -5,7 +5,7 @@ import { CacheWordService } from '../cache-word.service';
 export class CacheMapWordService implements CacheWordService {
   private wordMap: Map<string, string> = new Map();
 
-  public async getWord(korean: string): Promise<string> {
+  public async getVariable(korean: string): Promise<string> {
     if (!(await this.isCachedWord(korean))) {
       throw new Error('not cached word');
     }

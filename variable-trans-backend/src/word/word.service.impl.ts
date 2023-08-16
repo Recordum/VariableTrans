@@ -1,7 +1,8 @@
 import { CacheWordService } from './cache-word/cache-word.service';
 import { Inject } from '@nestjs/common';
 import { WordService } from './word.service';
-import { WordRepository } from './word.repository';
+import { WordRepository } from './repository/word.repository';
+import { Word } from './entitiy/word.entity';
 
 export class WordServiceImpl implements WordService {
   constructor(
@@ -10,14 +11,23 @@ export class WordServiceImpl implements WordService {
     @Inject('WordRepository') private readonly wordRepository: WordRepository,
   ) {}
 
-  public async findWord(korean: string): Promise<string> | undefined {
+  public async getVariable(korean: string): Promise<string> | undefined {
     if (await this.cacheWordService.isCachedWord(korean)) {
-      return this.cacheWordService.getWord(korean);
+      return this.cacheWordService.getVariable(korean);
     }
-    return this.wordRepository.findWordByKorean(korean);
+    const word: Word = await this.wordRepository.findWordByKorean(korean);
+
+    return word?.variable;
   }
 
-  public async saveWord(korean: string, word: string): Promise<void> {
-    await this.wordRepository.saveWord(korean, word);
+  public async saveVariable(korean: string, variable: string): Promise<void> {
+    const word: Word = new Word();
+    word.korean = korean;
+    word.variable = variable;
+
+    await Promise.all([
+      this.cacheWordService.setWord(korean, variable),
+      this.wordRepository.saveWord(word),
+    ]);
   }
 }

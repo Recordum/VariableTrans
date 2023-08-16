@@ -8,10 +8,9 @@ export class TranslationController {
     private readonly translationService: TranslationService,
   ) {}
 
-  @Get() translate(
-    @Query('koreanVariable') koreanVariable: string,
-  ): Promise<string> {
+  @Get()
+  translate(@Query('koreanVariable') koreanVariable: string): Promise<string> {
     const userId = 'TEST';
-    return this.translationService.translateVariable(koreanVariable, userId);
+    return this.translationService.translateVariable(koreanVariable);
   }
 }

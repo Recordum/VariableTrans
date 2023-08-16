@@ -13,13 +13,13 @@ describe('CacheMapWordService', () => {
 
   it('setWord: 단어를 캐시 Map 에 저장', async () => {
     await service.setWord('안녕', 'hello');
-    expect(await service.getWord('안녕')).toBe('hello');
+    expect(await service.getVariable('안녕')).toBe('hello');
   });
 
   it('deletWord : 캐시 Map 에서 단어 삭제, 없는 단어를 캐시에서 찾을시 Error 발생', async () => {
     await service.setWord('안녕', 'hello');
     await service.deleteWord('안녕');
-    await expect(service.getWord('안녕')).rejects.toThrowError();
+    await expect(service.getVariable('안녕')).rejects.toThrowError();
   });
 
   it('IsWordCached : 캐시되어있는 단어에 true 반환', async () => {

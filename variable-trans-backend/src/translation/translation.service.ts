@@ -12,14 +12,14 @@ export class TranslationService {
   ) {}
 
   public async translateVariable(korean: string): Promise<string> {
-    let word: string = await this.wordService.findWord(korean);
-    if (word) {
-      return word;
+    let variable: string = await this.wordService.getVariable(korean);
+    if (variable) {
+      return variable;
     }
 
-    word = await this.translator.translateVariable(korean);
-    await this.wordService.saveWord(korean, word);
-    return word;
+    variable = await this.translator.translateVariable(korean);
+    await this.wordService.saveVariable(korean, variable);
+    return variable;
   }
 
   public recommandVariable(contents: string, userId: string): Promise<string> {

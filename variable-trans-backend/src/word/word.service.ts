@@ -1,4 +1,4 @@
 export interface WordService {
-  findWord(korean: string): Promise<string>;
-  saveWord(korean: string, word: string): Promise<void>;
+  getVariable(korean: string): Promise<string>;
+  saveVariable(korean: string, variable: string): Promise<void>;
 }
