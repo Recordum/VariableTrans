@@ -77,8 +77,7 @@ describe('UserService', () => {
     });
 
     it('중복 Email 회원가입시 Error 발생', async () => {
-      const user = new User();
-      user.userEmail = USER_EMAIL;
+      const user = new User(USER_EMAIL, PASSWORD);
       userRepository.saveUser(user);
 
       const registerUserDto = new RegisterUserDto(USER_EMAIL, PASSWORD);
@@ -91,9 +90,8 @@ describe('UserService', () => {
 
   describe('login', () => {
     it('주어진 Email로 가입된 회원이 존재하지 않을 경우 UnauthorizedException 발생', async () => {
-      const user = new User();
-      user.userEmail = USER_EMAIL;
-      user.password = await bcrypt.hash(PASSWORD, 10);
+      const user = new User(USER_EMAIL, PASSWORD);
+      await user.encodePassword();
       userRepository.saveUser(user);
 
       const loginUserDto = new LoginUserDto(
@@ -107,9 +105,8 @@ describe('UserService', () => {
     });
 
     it('주어진 Email로 가입된 회원이 존재하나 비밀번호가 틀린경우 UnauthorizedException 발생', async () => {
-      const user = new User();
-      user.userEmail = USER_EMAIL;
-      user.password = await bcrypt.hash(PASSWORD, 10);
+      const user = new User(USER_EMAIL, PASSWORD);
+      await user.encodePassword();
       userRepository.saveUser(user);
 
       const loginUserDto = new LoginUserDto(USER_EMAIL, 'wrongPassword');
@@ -120,15 +117,13 @@ describe('UserService', () => {
     });
 
     it('Email 비밀번호가 전부 맞은 경우 session을 저장 하고 sessionId를 반환', async () => {
-      const user = new User();
-      user.userEmail = USER_EMAIL;
-      user.password = await bcrypt.hash(PASSWORD, 10);
-      user.requestLimit = 10;
+      const user = new User(USER_EMAIL, PASSWORD);
+      await user.encodePassword();
       userRepository.saveUser(user);
       const loginUserDto = new LoginUserDto(USER_EMAIL, PASSWORD);
       const setSessionDto = new SetSessionDtoBuilder()
         .setGrade('normal')
-        .setRequestLimit(10)
+        .setRequestLimit(0)
         .setSessionId(SESSION_ID)
         .setUserId(user.Id)
         .build();
@@ -143,10 +138,8 @@ describe('UserService', () => {
   });
   describe('logout ', () => {
     it('세션저장소에서 세션을 지우고 RequestLimit을 DB에 update', async () => {
-      const user = new User();
-      user.userEmail = USER_EMAIL;
-      user.requestLimit = 1;
-      user.password = await bcrypt.hash(PASSWORD, 10);
+      const user = new User(USER_EMAIL, PASSWORD);
+      user.encodePassword();
       await userRepository.saveUser(user);
 
       const setSessionDto = new SetSessionDtoBuilder()

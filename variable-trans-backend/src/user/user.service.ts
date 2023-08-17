@@ -31,8 +31,8 @@ export class UserService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    await registerUserDto.encodePassword();
     const user: User = registerUserDto.toEntity();
+    await user.encodePassword();
     this.userRepository.saveUser(user);
   }
 
@@ -65,28 +65,18 @@ export class UserService {
     const user: User = await this.userRepository.findUserByEmail(
       loginUserDto.getUserEmail(),
     );
-    if (
-      !user ||
-      !(await this.validatePassword(loginUserDto.getPassword(), user.password))
-    ) {
+    if (!user || !(await user.validatePasword(loginUserDto.getPassword()))) {
       throw new UnauthorizedException('잘못된 Email 혹은 비밀번호 입니다.');
     }
     return user;
   }
 
-  private validatePassword(
-    loginPassword: string,
-    password: string,
-  ): Promise<boolean> {
-    return bcrypt.compare(loginPassword, password);
-  }
-
   private createSessionData(user: User, sessionId: string): SetSessionDto {
     const setSessionDto: SetSessionDto = new SetSessionDtoBuilder()
       .setSessionId(sessionId)
-      .setUserId(user.Id)
-      .setGrade(user.grade)
-      .setRequestLimit(user.requestLimit)
+      .setUserId(user.getId())
+      .setGrade(user.getGrade())
+      .setRequestLimit(user.getRequestLimit())
       .build();
     return setSessionDto;
   }

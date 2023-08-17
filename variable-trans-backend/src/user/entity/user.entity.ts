@@ -1,5 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-
+import { v4 as uuidv4 } from 'uuid';
+import * as bcrypt from 'bcrypt';
 @Entity('user')
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -16,4 +17,29 @@ export class User {
 
   @Column({ name: 'grade', type: 'varchar', length: '10', default: 'normal' })
   grade = 'normal';
+
+  constructor(userEmail: string, password: string) {
+    this.userEmail = userEmail;
+    this.password = password;
+    this.Id = uuidv4();
+  }
+  public validatePasword(password: string): Promise<boolean> {
+    return bcrypt.compare(password, this.password);
+  }
+
+  public async encodePassword(): Promise<void> {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
+
+  public getId(): string {
+    return this.Id;
+  }
+
+  public getGrade(): string {
+    return this.grade;
+  }
+
+  public getRequestLimit(): number {
+    return this.requestLimit;
+  }
 }

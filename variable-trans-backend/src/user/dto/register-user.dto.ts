@@ -14,14 +14,8 @@ export class RegisterUserDto {
     this.password = password;
   }
   public toEntity(): User {
-    const user: User = new User();
-    user.password = this.password;
-    user.userEmail = this.userEmail;
+    const user: User = new User(this.userEmail, this.password);
     return user;
-  }
-
-  public async encodePassword(): Promise<void> {
-    this.password = await bcrypt.hash(this.password, 10);
   }
 
   public getUserEmail(): string {
