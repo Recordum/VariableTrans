@@ -14,38 +14,24 @@ import { AuthGuard } from './auth/auth-guard';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userSerivce: UserService) {}
+  constructor(private readonly userService: UserService) {}
 
   @Post('register')
   public async register(@Body() registerUserDto: RegisterUserDto) {
-    await this.userSerivce.registerUser(registerUserDto);
+    await this.userService.registerUser(registerUserDto);
   }
 
   @Post('login')
   public async login(
     @Body() loginUserDto: LoginUserDto,
   ): Promise<ResponseSessionIdDto> {
-    const validateUserDto: ValidatedUserDto =
-      await this.userSerivce.validateUserCredentials(loginUserDto);
-
-    const sessionId = crypto.randomBytes(32).toString('hex');
-    const setSessionDto: SetSessionDto = new SetSessionDtoBuilder()
-      .setSessionId(sessionId)
-      .setUserId(validateUserDto.getUserId())
-      .setGrade(validateUserDto.getGrade())
-      .setRequestLimit(validateUserDto.getRequestLimit())
-      .build();
-
-    return new ResponseSessionIdDto(
-      await this.userSerivce.setSession(setSessionDto),
-    );
+    return await this.userService.login(loginUserDto);
   }
 
   @Post('logout')
   @UseGuards(AuthGuard)
   public async logout(@Req() sessionData: SetSessionDto) {
-    await this.userSerivce.updateRequestLimitAndSession(
-      sessionData.getSessionId(),
-    );
+    const sessionId = sessionData.getSessionId();
+    await this.userService.logout(sessionId);
   }
 }

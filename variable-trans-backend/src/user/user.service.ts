@@ -11,8 +11,13 @@ import { User } from './entity/user.entity';
 import { LoginUserDto } from './dto/login-user.dto';
 import { SessionService } from './session/session.service';
 import * as bcrypt from 'bcrypt';
-import { SetSessionDto } from './session/dto/set-session.dto';
+import {
+  SetSessionDto,
+  SetSessionDtoBuilder,
+} from './session/dto/set-session.dto';
+import * as crypto from 'crypto';
 import { ValidatedUserDto } from './dto/validated-user.dto';
+import { ResponseSessionIdDto } from './session/dto/response-session.dto';
 
 @Injectable()
 export class UserService {
@@ -43,9 +48,19 @@ export class UserService {
     return false;
   }
 
-  public async validateUserCredentials(
+  public async login(
     loginUserDto: LoginUserDto,
-  ): Promise<ValidatedUserDto> {
+  ): Promise<ResponseSessionIdDto> {
+    const user: User = await this.validateUserCredentials(loginUserDto);
+    const setSessionDto: SetSessionDto = this.createSessionData(user);
+    await this.setSession(setSessionDto);
+    const sessionId: string = setSessionDto.getSessionId();
+    return new ResponseSessionIdDto(sessionId);
+  }
+
+  private async validateUserCredentials(
+    loginUserDto: LoginUserDto,
+  ): Promise<User> {
     const user: User = await this.userRepository.findUserByEmail(
       loginUserDto.getUserEmail(),
     );
@@ -55,22 +70,33 @@ export class UserService {
     ) {
       throw new UnauthorizedException('잘못된 Email 혹은 비밀번호 입니다.');
     }
-    return new ValidatedUserDto(user);
+    return user;
   }
 
-  private async validatePassword(
+  private validatePassword(
     loginPassword: string,
     password: string,
   ): Promise<boolean> {
-    return await bcrypt.compare(loginPassword, password);
+    return bcrypt.compare(loginPassword, password);
   }
 
-  public async setSession(setSessionDto: SetSessionDto): Promise<string> {
+  private createSessionData(user: User): SetSessionDto {
+    const sessionId = crypto.randomBytes(32).toString('hex');
+    const setSessionDto: SetSessionDto = new SetSessionDtoBuilder()
+      .setSessionId(sessionId)
+      .setUserId(user.Id)
+      .setGrade(user.grade)
+      .setRequestLimit(user.requestLimit)
+      .build();
+    return setSessionDto;
+  }
+
+  private async setSession(setSessionDto: SetSessionDto): Promise<string> {
     await this.sessionService.setSessionData(setSessionDto);
     return setSessionDto.getSessionId();
   }
 
-  public async updateRequestLimitAndSession(sessionId: string): Promise<void> {
+  public async logout(sessionId: string): Promise<void> {
     const sessionDto: SetSessionDto = await this.sessionService.getSessionData(
       sessionId,
     );
