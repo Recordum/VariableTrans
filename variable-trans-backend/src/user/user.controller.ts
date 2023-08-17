@@ -25,7 +25,8 @@ export class UserController {
   public async login(
     @Body() loginUserDto: LoginUserDto,
   ): Promise<ResponseSessionIdDto> {
-    return await this.userService.login(loginUserDto);
+    const sessionId = crypto.randomBytes(32).toString('hex');
+    return await this.userService.login(loginUserDto, sessionId);
   }
 
   @Post('logout')

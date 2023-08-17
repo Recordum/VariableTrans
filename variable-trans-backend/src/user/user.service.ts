@@ -15,8 +15,6 @@ import {
   SetSessionDto,
   SetSessionDtoBuilder,
 } from './session/dto/set-session.dto';
-import * as crypto from 'crypto';
-import { ValidatedUserDto } from './dto/validated-user.dto';
 import { ResponseSessionIdDto } from './session/dto/response-session.dto';
 
 @Injectable()
@@ -50,11 +48,14 @@ export class UserService {
 
   public async login(
     loginUserDto: LoginUserDto,
+    sessionId: string,
   ): Promise<ResponseSessionIdDto> {
     const user: User = await this.validateUserCredentials(loginUserDto);
-    const setSessionDto: SetSessionDto = this.createSessionData(user);
+    const setSessionDto: SetSessionDto = this.createSessionData(
+      user,
+      sessionId,
+    );
     await this.setSession(setSessionDto);
-    const sessionId: string = setSessionDto.getSessionId();
     return new ResponseSessionIdDto(sessionId);
   }
 
@@ -80,8 +81,7 @@ export class UserService {
     return bcrypt.compare(loginPassword, password);
   }
 
-  private createSessionData(user: User): SetSessionDto {
-    const sessionId = crypto.randomBytes(32).toString('hex');
+  private createSessionData(user: User, sessionId: string): SetSessionDto {
     const setSessionDto: SetSessionDto = new SetSessionDtoBuilder()
       .setSessionId(sessionId)
       .setUserId(user.Id)
