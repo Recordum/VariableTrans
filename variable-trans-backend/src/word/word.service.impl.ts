@@ -21,13 +21,18 @@ export class WordServiceImpl implements WordService {
   }
 
   public async saveVariable(korean: string, variable: string): Promise<void> {
-    const word: Word = new Word();
-    word.korean = korean;
-    word.variable = variable;
+    const word: Word = this.createWord(korean, variable);
 
     await Promise.all([
       this.cacheWordService.setWord(korean, variable),
       this.wordRepository.saveWord(word),
     ]);
+  }
+
+  private createWord(korean: string, variable: string): Word {
+    const word: Word = new Word();
+    word.korean = korean;
+    word.variable = variable;
+    return word;
   }
 }
