@@ -43,6 +43,7 @@ describe('UserService', () => {
   let sessionService: MockSessionService;
   let USER_EMAIL: string;
   let PASSWORD: string;
+  let SESSION_ID: string;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -58,6 +59,7 @@ describe('UserService', () => {
     sessionService = module.get<MockSessionService>('SessionService');
     PASSWORD = 'testPassword';
     USER_EMAIL = 'mingyu@example.com';
+    SESSION_ID = 'SessionId';
   });
   describe('registerUser', () => {
     it('회원가입시 Repository에 저장됨', async () => {
@@ -87,7 +89,7 @@ describe('UserService', () => {
     });
   });
 
-  describe('validateUserCredentials', () => {
+  describe('login', () => {
     it('주어진 Email로 가입된 회원이 존재하지 않을 경우 UnauthorizedException 발생', async () => {
       const user = new User();
       user.userEmail = USER_EMAIL;
@@ -100,7 +102,7 @@ describe('UserService', () => {
       );
 
       await expect(
-        service.validateUserCredentials(loginUserDto),
+        service.login(loginUserDto, SESSION_ID),
       ).rejects.toThrowError(UnauthorizedException);
     });
 
@@ -112,71 +114,55 @@ describe('UserService', () => {
 
       const loginUserDto = new LoginUserDto(USER_EMAIL, 'wrongPassword');
 
-      await expect(
-        service.validateUserCredentials(loginUserDto),
-      ).rejects.toThrow(UnauthorizedException);
+      await expect(service.login(loginUserDto, SESSION_ID)).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
 
-    it('Email 비밀번호가 전부 맞은 경우 Reposiotry에 저장된 user의 validtedUserDto 반환', async () => {
+    it('Email 비밀번호가 전부 맞은 경우 session을 저장 하고 sessionId를 반환', async () => {
       const user = new User();
       user.userEmail = USER_EMAIL;
       user.password = await bcrypt.hash(PASSWORD, 10);
-      user.grade = 'normal';
       user.requestLimit = 10;
       userRepository.saveUser(user);
       const loginUserDto = new LoginUserDto(USER_EMAIL, PASSWORD);
-
-      const result: ValidatedUserDto = await service.validateUserCredentials(
-        loginUserDto,
-      );
-      const foundUser = await userRepository.findUserByEmail(USER_EMAIL);
-
-      expect(result.getUserId()).toBe(foundUser.Id);
-      expect(result.getGrade()).toBe(foundUser.grade);
-      expect(result.getRequestLimit()).toBe(foundUser.requestLimit);
-    });
-  });
-
-  describe('setSession', () => {
-    it('session을 session저장소에 저장 하고 sessionId를 반환', async () => {
       const setSessionDto = new SetSessionDtoBuilder()
         .setGrade('normal')
         .setRequestLimit(10)
-        .setSessionId('testSessionId')
-        .setUserId('testUserId')
+        .setSessionId(SESSION_ID)
+        .setUserId(user.Id)
         .build();
-      const result = await service.setSession(setSessionDto);
 
-      expect(result).toBe('testSessionId');
-      expect(await sessionService.getSessionData('testSessionId')).toBe(
+      const result = await service.login(loginUserDto, SESSION_ID);
+
+      expect(result).toEqual({ sessionId: SESSION_ID });
+      expect(await sessionService.getSessionData(SESSION_ID)).toEqual(
         setSessionDto,
       );
     });
   });
-  describe('updateRequestLimitAndSession ', () => {
+  describe('logout ', () => {
     it('세션저장소에서 세션을 지우고 RequestLimit을 DB에 update', async () => {
-      const setSessionDto = new SetSessionDtoBuilder()
-        .setGrade('normal')
-        .setRequestLimit(10)
-        .setSessionId('testSessionId')
-        .setUserId('testUserId')
-        .build();
-      await service.setSession(setSessionDto);
-
       const user = new User();
       user.userEmail = USER_EMAIL;
       user.requestLimit = 1;
-      user.Id = 'testUserId';
+      user.password = await bcrypt.hash(PASSWORD, 10);
       await userRepository.saveUser(user);
 
-      await service.updateRequestLimitAndSession('testSessionId');
+      const setSessionDto = new SetSessionDtoBuilder()
+        .setGrade(user.grade)
+        .setRequestLimit(100)
+        .setSessionId(SESSION_ID)
+        .setUserId(user.Id)
+        .build();
+      await sessionService.setSessionData(setSessionDto);
+
+      await service.logout(SESSION_ID);
 
       const foundUser: User = await userRepository.findUserByEmail(USER_EMAIL);
 
-      expect(foundUser.requestLimit).toBe(10);
-      expect(
-        await sessionService.getSessionData('testSessionId'),
-      ).toBeUndefined();
+      expect(foundUser.requestLimit).toBe(100);
+      expect(await sessionService.getSessionData(SESSION_ID)).toBeUndefined();
     });
   });
 });
