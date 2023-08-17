@@ -33,6 +33,10 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.SSH_KEY }}
         script: |
+          CONTAINER_NAME="my_app_container"
           docker pull mingyuoh/variable-trans-backend:latest
-          docker stop $(docker ps -q)
-          docker run -d -p 80:3000 mingyuoh/variable-trans-backend:latest
+          if docker ps -a --format '{{.Names}}' | grep -Eq "^${CONTAINER_NAME}$"; then
+            docker stop $CONTAINER_NAME
+            docker rm $CONTAINER_NAME
+          fi
+          docker run -d -p 80:3000 --name $CONTAINER_NAME mingyuoh/variable-trans-backend:latest
