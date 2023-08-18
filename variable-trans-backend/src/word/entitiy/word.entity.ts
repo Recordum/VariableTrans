@@ -10,4 +10,13 @@ export class Word {
 
   @Column({ name: 'count', type: 'int', default: 0 })
   count: number;
+
+  constructor(korean: string, variable: string) {
+    this.korean = korean;
+    this.variable = variable;
+  }
+
+  public getVariable(): string {
+    return this.variable;
+  }
 }

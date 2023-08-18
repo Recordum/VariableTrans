@@ -16,8 +16,10 @@ export class WordServiceImpl implements WordService {
       return this.cacheWordService.getVariable(korean);
     }
     const word: Word = await this.wordRepository.findWordByKorean(korean);
-
-    return word?.variable;
+    if (word) {
+      await this.cacheWordService.setWord(korean, word.getVariable());
+    }
+    return word?.getVariable();
   }
 
   public async saveVariable(korean: string, variable: string): Promise<void> {
@@ -30,9 +32,6 @@ export class WordServiceImpl implements WordService {
   }
 
   private createWord(korean: string, variable: string): Word {
-    const word: Word = new Word();
-    word.korean = korean;
-    word.variable = variable;
-    return word;
+    return new Word(korean, variable);
   }
 }

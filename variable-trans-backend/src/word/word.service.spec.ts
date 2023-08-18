@@ -41,22 +41,21 @@ describe('WordService', () => {
     });
 
     it('word가 Cach 저장소에 없고, Repository에만 있을떄 Repsitory에서 반환', async () => {
-      const word: Word = new Word();
-      word.korean = KOREAN;
-      word.variable = VAR;
+      const word: Word = new Word(KOREAN, VAR);
+
       wordRepository.findWordByKorean.mockResolvedValue(word);
 
-      const foundWord: string = await service.getVariable(KOREAN);
+      const foundVariable: string = await service.getVariable(KOREAN);
 
-      expect(foundWord).toBe(VAR);
+      expect(foundVariable).toBe(VAR);
       expect(wordRepository.findWordByKorean).toHaveBeenCalled();
     });
 
     it('word가 Repoistory에 존재하지 않을떄 undefined 반환', async () => {
       wordRepository.findWordByKorean.mockResolvedValue(undefined);
-      const foundWord: string = await service.getVariable(KOREAN);
+      const foundVariable: string = await service.getVariable(KOREAN);
 
-      expect(foundWord).toBeUndefined();
+      expect(foundVariable).toBeUndefined();
       expect(wordRepository.findWordByKorean).toHaveBeenCalled();
     });
   });
