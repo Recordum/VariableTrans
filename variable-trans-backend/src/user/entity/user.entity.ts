@@ -13,15 +13,17 @@ export class User {
   password: string;
 
   @Column({ name: 'request_limit', type: 'int', default: 0 })
-  requestLimit = 0;
+  requestLimit: number;
 
   @Column({ name: 'grade', type: 'varchar', length: '10', default: 'normal' })
-  grade = 'normal';
+  grade: string;
 
   constructor(userEmail: string, password: string) {
     this.userEmail = userEmail;
     this.password = password;
     this.Id = uuidv4();
+    this.requestLimit = 0;
+    this.grade = 'normal';
   }
   public validatePasword(password: string): Promise<boolean> {
     return bcrypt.compare(password, this.password);

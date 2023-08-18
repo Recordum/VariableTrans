@@ -125,7 +125,7 @@ describe('UserService', () => {
         .setGrade('normal')
         .setRequestLimit(0)
         .setSessionId(SESSION_ID)
-        .setUserId(user.Id)
+        .setUserId(user.getId())
         .build();
 
       const result = await service.login(loginUserDto, SESSION_ID);
@@ -143,10 +143,10 @@ describe('UserService', () => {
       await userRepository.saveUser(user);
 
       const setSessionDto = new SetSessionDtoBuilder()
-        .setGrade(user.grade)
+        .setGrade(user.getGrade())
         .setRequestLimit(100)
         .setSessionId(SESSION_ID)
-        .setUserId(user.Id)
+        .setUserId(user.getId())
         .build();
       await sessionService.setSessionData(setSessionDto);
 
