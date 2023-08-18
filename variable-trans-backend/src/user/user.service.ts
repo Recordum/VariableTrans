@@ -10,7 +10,6 @@ import { UserRepository } from './repository/user.repository';
 import { User } from './entity/user.entity';
 import { LoginUserDto } from './dto/login-user.dto';
 import { SessionService } from './session/session.service';
-import * as bcrypt from 'bcrypt';
 import {
   SetSessionDto,
   SetSessionDtoBuilder,
