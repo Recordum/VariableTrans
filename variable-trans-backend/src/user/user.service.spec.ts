@@ -10,7 +10,7 @@ import * as bcrypt from 'bcrypt';
 import { ValidatedUserDto } from './dto/validated-user.dto';
 import { MockSessionService } from './auth/auth-guard.spec';
 
-class MockUserRepository implements UserRepository {
+export class MockUserRepository implements UserRepository {
   public users: User[] = [];
 
   async updateRequestLimit(id: string, requestLimit: number) {

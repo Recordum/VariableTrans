@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserService } from './user.service';
-import { UserController } from './user.controller';
+import { GenerateSessionId, UserController } from './user.controller';
 import { User } from './entity/user.entity';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-ioredis';
@@ -19,6 +19,7 @@ import { MySqlUserRepository } from './repository/implementation/mysql.user.repo
   ],
   providers: [
     UserService,
+    GenerateSessionId,
     {
       provide: 'SessionService',
       useClass: RedisSessionService,
