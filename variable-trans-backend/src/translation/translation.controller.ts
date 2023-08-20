@@ -1,5 +1,7 @@
+import { KoreanDto } from './dto/Korean.dto';
+import { VariableNameDto } from './dto/variable-name.dto';
 import { TranslationService } from './translation.service';
-import { Controller, Get, Inject, Query } from '@nestjs/common';
+import { Controller, Get, Inject, Query, UseGuards } from '@nestjs/common';
 
 @Controller('translation')
 export class TranslationController {
@@ -9,8 +11,9 @@ export class TranslationController {
   ) {}
 
   @Get()
-  translate(@Query('koreanVariable') koreanVariable: string): Promise<string> {
-    const userId = 'TEST';
-    return this.translationService.translateVariable(koreanVariable);
+  async translate(@Query() koreanDto: KoreanDto): Promise<VariableNameDto> {
+    return await this.translationService.translateVariable(
+      koreanDto.getKorean(),
+    );
   }
 }
