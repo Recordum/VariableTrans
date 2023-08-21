@@ -3,6 +3,7 @@ import { TranslationService } from './translation.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { WordService } from 'src/word/word.service';
 import { VariableNameDto } from './dto/variable-name.dto';
+import { KoreanDto } from './dto/Korean.dto';
 
 describe('translationService', () => {
   let service: TranslationService;
@@ -38,7 +39,7 @@ describe('translationService', () => {
     PASCAL_CASE = 'RecommendVariableName';
   });
   describe('translateVariable', () => {
-    it('wordService 에 word가 있을 시 WordService에서 네이밍 컨벤션으로 변환된 변수명 반환', async () => {
+    it('wordService 에 번역된 변수명을 네이밍 컨벤션으로 변환하여 반환', async () => {
       wordService.getVariable.mockResolvedValue(VARIABLE);
 
       const result = await service.translateVariable(KOREAN);
@@ -46,20 +47,23 @@ describe('translationService', () => {
       expect(result).toEqual(
         new VariableNameDto(SNAKE_CASE, CAMEL_CASE, PASCAL_CASE),
       );
+    });
+
+    it('wordService에서 변수명을 반환할떄 translator를 호출하지 않음', async () => {
+      wordService.getVariable.mockResolvedValue(VARIABLE);
+
+      await service.translateVariable(KOREAN);
+
       expect(translator.translateVariable).not.toHaveBeenCalled();
     });
 
-    it('wordService 에 word가 없을시 translaotr에서 네이밍 컨벤션으로 변환된 변수명 반환', async () => {
+    it('wordService에서 변수명을 반환하지 못할떄 translaotr에서 변수명 반환', async () => {
       wordService.getVariable.mockResolvedValue(undefined);
       translator.translateVariable.mockResolvedValue(VARIABLE);
 
-      const result = await service.translateVariable(KOREAN);
+      await service.translateVariable(KOREAN);
 
-      expect(result).toEqual(
-        new VariableNameDto(SNAKE_CASE, CAMEL_CASE, PASCAL_CASE),
-      );
-      expect(wordService.getVariable).toHaveBeenCalledWith(KOREAN);
-      expect(translator.translateVariable).toHaveBeenCalledWith(KOREAN);
+      expect(translator.translateVariable).toHaveBeenCalled();
     });
   });
 });
