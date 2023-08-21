@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { SetSessionDto, SetSessionDtoBuilder } from '../dto/set-session.dto';
 import { SessionService } from '../session.service';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
@@ -11,17 +11,25 @@ export class RedisSessionService implements SessionService {
   public async getSessionData(sessionId: string): Promise<SetSessionDto> {
     const sessionData = await this.redis.get(sessionId);
     if (!sessionData) {
-      throw new Error('세션 저장소에 세션이 존재하지 않습니다.');
+      throw new UnauthorizedException('존재하지 않는 세션입니다');
     }
     return new SetSessionDtoBuilder()
-      .setSessionId(sessionData['sessionId'])
+      .setSessionId(sessionId)
       .setUserId(sessionData['userId'])
       .setGrade(sessionData['grade'])
       .setRequestLimit(sessionData['requestLimit'])
       .build();
   }
   public async setSessionData(setSessionDto: SetSessionDto): Promise<void> {
-    await this.redis.set(setSessionDto.getSessionId(), setSessionDto, 86400);
+    const sessionId = setSessionDto.getSessionId();
+    const userId = setSessionDto.getUserId();
+    const grade = setSessionDto.getGrade();
+    const requestLimit = setSessionDto.getRequestLimit();
+    await this.redis.set(sessionId, {
+      grade: grade,
+      userId: userId,
+      requestLimit: requestLimit,
+    });
   }
   public async deleteSessionData(sessionId: string): Promise<void> {
     await this.redis.del(sessionId);
