@@ -42,4 +42,23 @@ describe('CacheMapWordService', () => {
       expect(result).toBe(true);
     });
   });
+
+  describe('getTrackedWord', () => {
+    it('set에 저장된 한국어를 key로 하는 value를 Map에서 전부 찾아 배열로 반환', async () => {
+      await service.trackWord('안녕1');
+      await service.trackWord('안녕2');
+      await service.trackWord('안녕3');
+      const newWord1 = new Word('안녕1', 'hello1');
+      const newWord2 = new Word('안녕2', 'hello2');
+      const newWord3 = new Word('안녕3', 'hello3');
+
+      await service.setWord('안녕1', newWord1);
+      await service.setWord('안녕2', newWord2);
+      await service.setWord('안녕3', newWord3);
+
+      const trackedWords: Word[] = await service.getTrackedWords();
+
+      expect(trackedWords).toEqual([newWord1, newWord2, newWord3]);
+    });
+  });
 });
