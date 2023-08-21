@@ -8,6 +8,7 @@ import {
   CanActivate,
   ExecutionContext,
   Inject,
+  UnauthorizedException,
 } from '@nestjs/common';
 
 @Injectable()
@@ -20,15 +21,12 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const sessionId = request.headers['sessionid'];
     if (!sessionId) {
-      return false;
+      throw new UnauthorizedException('로그인이 필요한 서비스 입니다');
     }
 
     const sessionData: SetSessionDto = await this.sessionService.getSessionData(
       sessionId,
     );
-    if (!sessionData) {
-      return false;
-    }
 
     const requestLimit: number = this.IncrementedRequestLimit(sessionData);
 
@@ -38,7 +36,7 @@ export class AuthGuard implements CanActivate {
     );
 
     if (this.exceedLimit(updateSessionData)) {
-      return false;
+      throw new UnauthorizedException('요청 횟수 초과');
     }
 
     request.sessionData = updateSessionData;
