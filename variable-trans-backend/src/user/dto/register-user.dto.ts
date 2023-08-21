@@ -1,9 +1,10 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsEmail, IsNotEmpty } from 'class-validator';
 import { User } from '../entity/user.entity';
 import * as bcrypt from 'bcrypt';
 
 export class RegisterUserDto {
   @IsNotEmpty()
+  @IsEmail()
   private userEmail: string;
 
   @IsNotEmpty()
