@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Word } from './entitiy/word.entity';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-store';
+import { MysqlWordRepository } from './repository/implemnetation/mysql-word.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Word])],
@@ -16,6 +17,10 @@ import { redisStore } from 'cache-manager-redis-store';
     {
       provide: 'WordService',
       useClass: WordServiceImpl,
+    },
+    {
+      provide: 'WordRepository',
+      useClass: MysqlWordRepository,
     },
   ],
   exports: ['WordService'],
