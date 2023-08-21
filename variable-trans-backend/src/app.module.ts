@@ -4,13 +4,15 @@ import { WordModule } from './word/word.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfig } from './typeorm-config';
 import { UserModule } from './user/user.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    TypeOrmModule.forRoot(TypeOrmConfig),
     TranslationModule,
     WordModule,
-    TypeOrmModule.forRoot(TypeOrmConfig),
     UserModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [],
   providers: [],
