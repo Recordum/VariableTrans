@@ -1,7 +1,9 @@
 import { Repository, DataSource } from 'typeorm';
 import { Word } from 'src/word/entitiy/word.entity';
 import { WordRepository } from '../word.repository';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class MysqlWordRepository
   extends Repository<Word>
   implements WordRepository
