@@ -1,19 +1,11 @@
-import { LoginUserDto } from './dto/login-user.dto';
-import { RegisterUserDto } from './dto/register-user.dto';
-import { SetSessionDto } from './session/dto/set-session.dto';
-import { UserService } from './user.service';
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  Post,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Req } from '@nestjs/common';
 import * as crypto from 'crypto';
-import { ResponseSessionIdDto } from './session/dto/response-session.dto';
-import { AuthGuard } from './auth/auth-guard';
+import { LoginUserDto } from '../dto/login-user.dto';
+import { RegisterUserDto } from '../dto/register-user.dto';
+import { ResponseSessionIdDto } from '../dto/response-session.dto';
+import { AuthGuard } from '../service/auth/auth-guard';
+import { UserService } from '../service/user.service';
+
 export class GenerateSessionId {
   public generate(): string {
     return crypto.randomBytes(32).toString('hex');

@@ -1,18 +1,14 @@
-import { Controller } from '@nestjs/common';
-import {
-  SetSessionDto,
-  SetSessionDtoBuilder,
-} from './session/dto/set-session.dto';
-import { ResponseSessionIdDto } from './session/dto/response-session.dto';
-import { LoginUserDto } from './dto/login-user.dto';
+import { LoginUserDto } from '../dto/login-user.dto';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserController, GenerateSessionId } from './user.controller';
-import { UserService } from './user.service';
-import { RegisterUserDto } from './dto/register-user.dto';
-import { AuthGuard } from './auth/auth-guard';
-import { MockUserRepository } from './user.service.spec';
-import { User } from './entity/user.entity';
-import { MockSessionService } from './auth/auth-guard.spec';
+import { RegisterUserDto } from '../dto/register-user.dto';
+import { AuthGuard } from '../service/auth/auth-guard';
+import { MockUserRepository } from '../service/user.service.spec';
+import { User } from '../entity/user.entity';
+import { MockSessionService } from '../service/auth/auth-guard.spec';
+import { SetSessionDtoBuilder } from '../dto/set-session.dto';
+import { UserService } from '../service/user.service';
+import { ResponseSessionIdDto } from '../dto/response-session.dto';
 /**
  * UserController는 단순히 UserService를 호출하는 하기 때문에
  * 실제 UserService를 주입하여 테스트 코드 작성.

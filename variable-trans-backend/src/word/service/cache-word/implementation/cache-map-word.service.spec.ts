@@ -1,4 +1,4 @@
-import { Word } from '../../entity/word.entity';
+import { Word } from '../../../entity/word.entity';
 import { CacheMapWordService } from './cache-map-word.service';
 import { Test, TestingModule } from '@nestjs/testing';
 

@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { WordServiceImpl } from './word.service.impl';
+import { WordRepository } from '../repository/word.repository';
 import { CacheMapWordService } from './cache-word/implementation/cache-map-word.service';
-import { WordRepository } from './repository/word.repository';
-import { Word } from './entity/word.entity';
+import { Word } from '../entity/word.entity';
 
 describe('WordService', () => {
   let service: WordServiceImpl;

@@ -5,16 +5,14 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { RegisterUserDto } from './dto/register-user.dto';
-import { UserRepository } from './repository/user.repository';
-import { User } from './entity/user.entity';
-import { LoginUserDto } from './dto/login-user.dto';
 import { SessionService } from './session/session.service';
-import {
-  SetSessionDto,
-  SetSessionDtoBuilder,
-} from './session/dto/set-session.dto';
-import { ResponseSessionIdDto } from './session/dto/response-session.dto';
+
+import { UserRepository } from '../repository/user.repository';
+import { LoginUserDto } from '../dto/login-user.dto';
+import { RegisterUserDto } from '../dto/register-user.dto';
+import { User } from '../entity/user.entity';
+import { ResponseSessionIdDto } from '../dto/response-session.dto';
+import { SetSessionDto, SetSessionDtoBuilder } from '../dto/set-session.dto';
 
 @Injectable()
 export class UserService {

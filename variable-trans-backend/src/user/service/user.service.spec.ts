@@ -1,14 +1,14 @@
-import { SetSessionDtoBuilder } from './session/dto/set-session.dto';
-import { UserRepository } from './repository/user.repository';
+import { UserRepository } from '../repository/user.repository';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
-import { RegisterUserDto } from './dto/register-user.dto';
-import { User } from './entity/user.entity';
-import { LoginUserDto } from './dto/login-user.dto';
+import { RegisterUserDto } from '../dto/register-user.dto';
+import { User } from '../entity/user.entity';
+import { LoginUserDto } from '../dto/login-user.dto';
 import { UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { ValidatedUserDto } from './dto/validated-user.dto';
+import { ValidatedUserDto } from '../dto/validated-user.dto';
 import { MockSessionService } from './auth/auth-guard.spec';
+import { SetSessionDtoBuilder } from '../dto/set-session.dto';
 
 export class MockUserRepository implements UserRepository {
   public users: User[] = [];

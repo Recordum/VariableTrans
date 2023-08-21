@@ -1,8 +1,8 @@
-import { AuthGuard } from 'src/user/auth/auth-guard';
-import { KoreanDto } from './dto/Korean.dto';
-import { VariableNameDto } from './dto/variable-name.dto';
-import { TranslationService } from './translation.service';
+import { AuthGuard } from 'src/user/service/auth/auth-guard';
+import { KoreanDto } from '../dto/Korean.dto';
+import { VariableNameDto } from '../dto/variable-name.dto';
 import { Controller, Get, Inject, Query, UseGuards } from '@nestjs/common';
+import { TranslationService } from '../service/translation.service';
 
 @Controller('translation')
 export class TranslationController {

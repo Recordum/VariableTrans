@@ -1,4 +1,4 @@
-import { Word } from './entity/word.entity';
+import { Word } from '../entity/word.entity';
 
 export interface WordService {
   getWord(korean: string): Promise<Word>;

@@ -1,5 +1,5 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { SetSessionDto, SetSessionDtoBuilder } from '../dto/set-session.dto';
+import { SetSessionDto, SetSessionDtoBuilder } from '../../../dto/set-session.dto';
 import { SessionService } from '../session.service';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';

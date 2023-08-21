@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { CacheMapWordService } from './cache-word/implementation/cache-map-word.service';
-import { WordServiceImpl } from './word.service.impl';
+import { CacheMapWordService } from './service/cache-word/implementation/cache-map-word.service';
+import { WordServiceImpl } from './service/word.service.impl';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Word } from './entity/word.entity';
 import { CacheModule } from '@nestjs/cache-manager';

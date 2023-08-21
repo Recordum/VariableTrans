@@ -1,8 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Translator } from './translator/translator';
-import { WordService } from 'src/word/word.service';
-import { VariableNameDto } from './dto/variable-name.dto';
+
 import { Word } from 'src/word/entity/word.entity';
+import { WordService } from 'src/word/service/word.service';
+import { VariableNameDto } from '../dto/variable-name.dto';
+import { Translator } from '../translator/translator';
 
 @Injectable()
 export class TranslationService {

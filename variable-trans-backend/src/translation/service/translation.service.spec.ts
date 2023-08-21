@@ -1,9 +1,9 @@
-import { Translator } from './translator/translator';
+import { Translator } from '../translator/translator';
 import { TranslationService } from './translation.service';
 import { Test, TestingModule } from '@nestjs/testing';
-import { WordService } from 'src/word/word.service';
-import { VariableNameDto } from './dto/variable-name.dto';
-import { Word } from '../word/entity/word.entity';
+import { VariableNameDto } from '../dto/variable-name.dto';
+import { Word } from '../../word/entity/word.entity';
+import { WordService } from 'src/word/service/word.service';
 
 describe('translationService', () => {
   let service: TranslationService;
