@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CacheWordService } from '../cache-word.service';
-import { Word } from 'src/word/entitiy/word.entity';
+import { Word } from 'src/word/entity/word.entity';
 
 @Injectable()
 export class CacheMapWordService implements CacheWordService {

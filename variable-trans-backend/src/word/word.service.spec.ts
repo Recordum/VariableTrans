@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { WordServiceImpl } from './word.service.impl';
 import { CacheMapWordService } from './cache-word/implementation/cache-map-word.service';
 import { WordRepository } from './repository/word.repository';
-import { Word } from './entitiy/word.entity';
+import { Word } from './entity/word.entity';
 
 describe('WordService', () => {
   let service: WordServiceImpl;
@@ -31,32 +31,37 @@ describe('WordService', () => {
   });
 
   describe('findWord', () => {
+    it('word가 Caching 되어 있다면 한국어에 대응하는 Word 반환', async () => {
+      const word: Word = new Word(KOREAN, VAR);
+      cacheWordService.setWord(KOREAN, word);
+
+      const foudnWord: Word = await service.getWord(KOREAN);
+
+      expect(foudnWord).toEqual(word);
+    });
     it('word가 Caching 되어 있다면 Cache에서 반환', async () => {
-      cacheWordService.setWord(KOREAN, VAR);
+      const word: Word = new Word(KOREAN, VAR);
+      cacheWordService.setWord(KOREAN, word);
 
-      const foundVariable: string = await service.getVariable(KOREAN);
+      await service.getWord(KOREAN);
 
-      expect(foundVariable).toBe(VAR);
       expect(wordRepository.findWordByKorean).not.toHaveBeenCalled();
     });
 
     it('word가 Cach 저장소에 없고, Repository에만 있을떄 Repsitory에서 반환', async () => {
       const word: Word = new Word(KOREAN, VAR);
-
       wordRepository.findWordByKorean.mockResolvedValue(word);
 
-      const foundVariable: string = await service.getVariable(KOREAN);
+      await service.getWord(KOREAN);
 
-      expect(foundVariable).toBe(VAR);
       expect(wordRepository.findWordByKorean).toHaveBeenCalled();
     });
 
     it('word가 Repoistory에 존재하지 않을떄 undefined 반환', async () => {
       wordRepository.findWordByKorean.mockResolvedValue(undefined);
-      const foundVariable: string = await service.getVariable(KOREAN);
+      const word: Word = await service.getWord(KOREAN);
 
-      expect(foundVariable).toBeUndefined();
-      expect(wordRepository.findWordByKorean).toHaveBeenCalled();
+      expect(word).toBeUndefined();
     });
   });
 });

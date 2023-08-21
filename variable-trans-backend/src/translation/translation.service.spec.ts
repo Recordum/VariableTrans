@@ -3,21 +3,22 @@ import { TranslationService } from './translation.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { WordService } from 'src/word/word.service';
 import { VariableNameDto } from './dto/variable-name.dto';
-import { KoreanDto } from './dto/Korean.dto';
+import { Word } from '../word/entity/word.entity';
 
 describe('translationService', () => {
   let service: TranslationService;
   let wordService: jest.Mocked<WordService>;
   let translator: jest.Mocked<Translator>;
-  let KOREAN;
-  let VARIABLE;
-  let SNAKE_CASE;
-  let CAMEL_CASE;
-  let PASCAL_CASE;
+  let KOREAN: string;
+  let VARIABLE: string;
+  let SNAKE_CASE: string;
+  let CAMEL_CASE: string;
+  let PASCAL_CASE: string;
   beforeEach(async () => {
     wordService = {
-      getVariable: jest.fn(),
-      saveVariable: jest.fn(),
+      getWord: jest.fn(),
+      saveWord: jest.fn(),
+      createWord: jest.fn(),
     };
     translator = {
       translateVariable: jest.fn(),
@@ -40,7 +41,7 @@ describe('translationService', () => {
   });
   describe('translateVariable', () => {
     it('wordService 에 번역된 변수명을 네이밍 컨벤션으로 변환하여 반환', async () => {
-      wordService.getVariable.mockResolvedValue(VARIABLE);
+      wordService.getWord.mockResolvedValue(new Word(KOREAN, VARIABLE));
 
       const result = await service.translateVariable(KOREAN);
 
@@ -50,7 +51,7 @@ describe('translationService', () => {
     });
 
     it('wordService에서 변수명을 반환할떄 translator를 호출하지 않음', async () => {
-      wordService.getVariable.mockResolvedValue(VARIABLE);
+      wordService.getWord.mockResolvedValue(new Word(KOREAN, VARIABLE));
 
       await service.translateVariable(KOREAN);
 
@@ -58,8 +59,9 @@ describe('translationService', () => {
     });
 
     it('wordService에서 변수명을 반환하지 못할떄 translaotr에서 변수명 반환', async () => {
-      wordService.getVariable.mockResolvedValue(undefined);
+      wordService.getWord.mockResolvedValue(undefined);
       translator.translateVariable.mockResolvedValue(VARIABLE);
+      wordService.createWord.mockReturnValue(new Word(KOREAN, VARIABLE));
 
       await service.translateVariable(KOREAN);
 

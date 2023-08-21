@@ -26,6 +26,7 @@ export class Word {
       .map((word) => word.charAt(0).toLowerCase() + word.slice(1))
       .join('_');
   }
+
   public convertToCamelCase(): string {
     const words = this.variable.split(' ');
     const firstWord = words[0].toLowerCase();

@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Translator } from './translator/translator';
 import { WordService } from 'src/word/word.service';
 import { VariableNameDto } from './dto/variable-name.dto';
-import { Word } from 'src/word/entitiy/word.entity';
+import { Word } from 'src/word/entity/word.entity';
 
 @Injectable()
 export class TranslationService {
@@ -23,9 +23,9 @@ export class TranslationService {
 
     const variable: string = await this.translator.translateVariable(korean);
 
-    const newWord = this.wordService.createWord(korean, variable);
+    const newWord: Word = this.wordService.createWord(korean, variable);
     await this.wordService.saveWord(korean, newWord);
-    return this.convertToNamingConventions(word);
+    return this.convertToNamingConventions(newWord);
   }
 
   public recommendVariable(contents: string, userId: string): Promise<string> {
@@ -38,7 +38,7 @@ export class TranslationService {
 
   private convertToNamingConventions(word: Word) {
     const snakeCase: string = word.convertToSnakeCase();
-    const camelCase: string = word.convertToPascalCase();
+    const camelCase: string = word.convertToCamelCase();
     const pascalCase: string = word.convertToPascalCase();
 
     return new VariableNameDto(snakeCase, camelCase, pascalCase);

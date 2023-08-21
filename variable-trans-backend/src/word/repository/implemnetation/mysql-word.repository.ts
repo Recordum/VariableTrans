@@ -1,5 +1,5 @@
 import { Repository, DataSource } from 'typeorm';
-import { Word } from 'src/word/entitiy/word.entity';
+import { Word } from 'src/word/entity/word.entity';
 import { WordRepository } from '../word.repository';
 import { Injectable } from '@nestjs/common';
 

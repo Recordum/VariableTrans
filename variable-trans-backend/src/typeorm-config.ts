@@ -1,6 +1,6 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { User } from './user/entity/user.entity';
-import { Word } from './word/entitiy/word.entity';
+import { Word } from './word/entity/word.entity';
 
 export const TypeOrmConfig: TypeOrmModuleOptions = {
   type: process.env.DB_TYPE as any,

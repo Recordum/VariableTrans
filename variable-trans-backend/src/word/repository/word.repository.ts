@@ -1,4 +1,4 @@
-import { Word } from '../entitiy/word.entity';
+import { Word } from '../entity/word.entity';
 
 export interface WordRepository {
   findWordByKorean(korean: string): Promise<Word>;
