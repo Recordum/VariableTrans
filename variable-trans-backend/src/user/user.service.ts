@@ -32,7 +32,7 @@ export class UserService {
     }
     const user: User = registerUserDto.toEntity();
     await user.encodePassword();
-    this.userRepository.saveUser(user);
+    await this.userRepository.saveUser(user);
   }
 
   private async isEmailAlreadyRegistered(userEmail: string): Promise<boolean> {
@@ -80,9 +80,8 @@ export class UserService {
     return setSessionDto;
   }
 
-  private async setSession(setSessionDto: SetSessionDto): Promise<string> {
+  private async setSession(setSessionDto: SetSessionDto) {
     await this.sessionService.setSessionData(setSessionDto);
-    return setSessionDto.getSessionId();
   }
 
   public async logout(sessionId: string): Promise<void> {
