@@ -5,4 +5,6 @@ export interface CacheWordService {
   deleteWord(korean: string): Promise<void>;
   getWord(korean: string): Promise<Word>;
   isCachedWord(korean: string): Promise<boolean>;
+  trackWord(korean: string): Promise<void>;
+  getTrackedWords(): Promise<Word[]>;
 }
