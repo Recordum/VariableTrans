@@ -13,18 +13,27 @@ export class TranslationService {
   ) {}
 
   public async translateVariable(korean: string): Promise<VariableNameDto> {
+    korean = this.removeSpacing(korean);
     let variable: string = await this.wordService.getVariable(korean);
+
     if (variable) {
+      console.log(`wordModule 변수명 : ${variable}`);
       return this.convertToNamingConventions(variable);
     }
 
     variable = await this.translator.translateVariable(korean);
+
+    console.log(`translator 변수명 : ${variable}`);
     await this.wordService.saveVariable(korean, variable);
     return this.convertToNamingConventions(variable);
   }
 
-  public recommandVariable(contents: string, userId: string): Promise<string> {
+  public recommendVariable(contents: string, userId: string): Promise<string> {
     throw new Error('MUST IMPLEMNT ');
+  }
+
+  private removeSpacing(korean: string): string {
+    return korean.split(' ').join('');
   }
 
   private convertToNamingConventions(variable: string) {
@@ -37,21 +46,25 @@ export class TranslationService {
 
   private convertToSnakeCase(variable: string): string {
     return variable
-      .trim()
-      .replace(/([a-z])([A-Z])/g, '$1_$2')
-      .replace(/\s+/g, '_')
-      .toLowerCase();
+      .split(' ')
+      .map((word) => word.charAt(0).toLowerCase() + word.slice(1))
+      .join('_');
   }
   private convertToCamelCase(variable: string): string {
-    return variable
-      .trim()
-      .replace(/(\s+)([a-z])/g, (_, __, letter) => letter.toUpperCase())
-      .replace(/^\w/, (first) => first.toLowerCase());
+    const words = variable.split(' ');
+    const firstWord = words[0].toLowerCase();
+    const restOfWords = words
+      .slice(1)
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join('');
+
+    return firstWord + restOfWords;
   }
+
   private convertToPascalCase(variable: string): string {
     return variable
-      .trim()
-      .replace(/(\s+)([a-z])/g, (_, __, letter) => letter.toUpperCase())
-      .replace(/^\w/, (first) => first.toUpperCase());
+      .split(' ')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join('');
   }
 }
