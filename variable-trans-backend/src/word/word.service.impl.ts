@@ -11,27 +11,26 @@ export class WordServiceImpl implements WordService {
     @Inject('WordRepository') private readonly wordRepository: WordRepository,
   ) {}
 
-  public async getVariable(korean: string): Promise<string> | undefined {
+  public async getWord(korean: string): Promise<Word> | undefined {
     if (await this.cacheWordService.isCachedWord(korean)) {
-      return this.cacheWordService.getVariable(korean);
+      console.log('wordService : CACHE HIT!');
+      return this.cacheWordService.getWord(korean);
     }
     const word: Word = await this.wordRepository.findWordByKorean(korean);
     if (word) {
-      await this.cacheWordService.setWord(korean, word.getVariable());
+      await this.cacheWordService.setWord(korean, word);
     }
-    return word?.getVariable();
+    return word;
   }
 
-  public async saveVariable(korean: string, variable: string): Promise<void> {
-    const word: Word = this.createWord(korean, variable);
-
+  public async saveWord(korean: string, word: Word): Promise<void> {
     await Promise.all([
-      this.cacheWordService.setWord(korean, variable),
+      this.cacheWordService.setWord(korean, word),
       this.wordRepository.saveWord(word),
     ]);
   }
 
-  private createWord(korean: string, variable: string): Word {
+  public createWord(korean: string, variable: string): Word {
     return new Word(korean, variable);
   }
 }

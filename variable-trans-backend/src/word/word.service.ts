@@ -1,4 +1,7 @@
+import { Word } from './entitiy/word.entity';
+
 export interface WordService {
-  getVariable(korean: string): Promise<string>;
-  saveVariable(korean: string, variable: string): Promise<void>;
+  getWord(korean: string): Promise<Word>;
+  saveWord(korean: string, word: Word): Promise<void>;
+  createWord(korean: string, variable: string): Word;
 }

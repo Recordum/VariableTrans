@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { CacheWordService } from '../cache-word.service';
+import { Word } from 'src/word/entitiy/word.entity';
 
 @Injectable()
 export class CacheMapWordService implements CacheWordService {
-  private wordMap: Map<string, string> = new Map();
+  private wordMap: Map<string, Word> = new Map();
 
-  public async getVariable(korean: string): Promise<string> {
+  public async getWord(korean: string): Promise<Word> {
     if (!(await this.isCachedWord(korean))) {
       throw new Error('not cached word');
     }
@@ -16,7 +17,7 @@ export class CacheMapWordService implements CacheWordService {
     return this.wordMap.has(korean);
   }
 
-  public async setWord(korean: string, word: string): Promise<void> {
+  public async setWord(korean: string, word: Word): Promise<void> {
     this.wordMap.set(korean, word);
   }
 
