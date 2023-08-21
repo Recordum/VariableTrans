@@ -16,10 +16,6 @@ export class Word {
     this.variable = variable;
   }
 
-  public getVariable(): string {
-    return this.variable;
-  }
-
   public convertToSnakeCase(): string {
     return this.variable
       .split(' ')
