@@ -11,15 +11,13 @@ import { UserService } from './user.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { AuthGuard } from './auth/auth-guard';
 import { MockUserRepository } from './user.service.spec';
-import { SessionService } from './session/session.service';
 import { User } from './entity/user.entity';
 import { MockSessionService } from './auth/auth-guard.spec';
-import { registerDecorator } from 'class-validator';
 /**
  * UserController는 단순히 UserService를 호출하는 하기 때문에
  * 실제 UserService를 주입하여 테스트 코드 작성.
  * UserService가 의존하는
- * UserRepository와 SessionService를 테스트용 Class 주입.
+ * UserRepository와 SessionService를 Mock Class 주입.
  */
 describe('UserController', () => {
   let userController: UserController;
@@ -131,7 +129,13 @@ describe('UserController', () => {
         .build();
       await sessionService.setSessionData(sessionData);
 
-      await userController.logout(sessionData);
+      const mockRequest = {
+        headers: {
+          sessionid: SESSION_ID,
+        },
+      };
+
+      await userController.logout(mockRequest as any);
 
       expect(await sessionService.getSessionData(SESSION_ID)).toBeUndefined();
     });

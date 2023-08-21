@@ -2,7 +2,15 @@ import { LoginUserDto } from './dto/login-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { SetSessionDto } from './session/dto/set-session.dto';
 import { UserService } from './user.service';
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import * as crypto from 'crypto';
 import { ResponseSessionIdDto } from './session/dto/response-session.dto';
 import { AuthGuard } from './auth/auth-guard';
@@ -19,7 +27,9 @@ export class UserController {
   ) {}
 
   @Post('register')
-  public async register(@Body() registerUserDto: RegisterUserDto) {
+  public async register(
+    @Body() registerUserDto: RegisterUserDto,
+  ): Promise<void> {
     await this.userService.registerUser(registerUserDto);
   }
 
@@ -33,8 +43,8 @@ export class UserController {
 
   @Post('logout')
   @UseGuards(AuthGuard)
-  public async logout(@Req() sessionData: SetSessionDto) {
-    const sessionId = sessionData.getSessionId();
+  public async logout(@Req() request): Promise<void> {
+    const sessionId = request.headers['sessionid'];
     await this.userService.logout(sessionId);
   }
 }
