@@ -6,7 +6,6 @@ import { User } from '../entity/user.entity';
 import { LoginUserDto } from '../dto/login-user.dto';
 import { UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { ValidatedUserDto } from '../dto/validated-user.dto';
 import { MockSessionService } from './auth/auth-guard.spec';
 import { SetSessionDtoBuilder } from '../dto/set-session.dto';
 
