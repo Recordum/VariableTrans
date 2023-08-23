@@ -9,7 +9,7 @@ export class TranslationController {
   constructor(private readonly translationService: TranslationService) {}
 
   @Get()
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   async translate(@Query() koreanDto: KoreanDto): Promise<VariableNameDto> {
     return await this.translationService.translateVariable(
       koreanDto.getKorean(),

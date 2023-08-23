@@ -1,26 +1,47 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import axios from 'axios';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+    context.subscriptions.push(
+        vscode.languages.registerCodeActionsProvider({ pattern: '**/*', scheme: 'file' }, {
+            provideCodeActions(document, range, context, token) {
+                const word = document.getText(range);
+                const action = new vscode.CodeAction('Translate', vscode.CodeActionKind.QuickFix);
+                action.command = {
+                    command: 'extension.translateAndShowOptions',
+                    title: 'Translate and Show Options',
+                    arguments: [document.uri, range, word]
+                };
+                return [action];
+            }
+        }, { providedCodeActionKinds: [vscode.CodeActionKind.QuickFix] })
+    );
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "variable-name-translator" is now active!');
+    let translateAndShowOptionsCommand = vscode.commands.registerCommand('extension.translateAndShowOptions', async (uri: vscode.Uri, range: vscode.Range, word: string) => {
+        try {
+            const response = await axios.get(`http://localhost:3000/translation?korean=${word}`);
+            const translations = response.data;
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('variable-name-translator.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from variable-name-translator!');
-	});
+            const options = Object.entries(translations).map(([key, value]) => `Convert to ${key}: ${value}`);
 
-	context.subscriptions.push(disposable);
+            const selected = await vscode.window.showQuickPick(options, { placeHolder: 'Choose a translation' });
+
+            if (selected) {
+                const translation = selected.split(": ")[1];
+                const textEditor = vscode.window.activeTextEditor;
+                if (textEditor) {
+                    textEditor.edit(builder => {
+                        builder.replace(range, translation);
+                    });
+                }
+            }
+        } catch (error) {
+            vscode.window.showErrorMessage("Translation failed.");
+            console.error(error);
+        }
+    });
+
+    context.subscriptions.push(translateAndShowOptionsCommand);
 }
 
-// This method is called when your extension is deactivated
-export function deactivate() {}
+
