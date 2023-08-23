@@ -42,9 +42,9 @@ describe('BatchService', () => {
       await CacheWordService.setWord('안녕2', newWord2);
       await CacheWordService.setWord('안녕3', newWord3);
 
-      await batchService.trackNewWord('안녕1');
-      await batchService.trackNewWord('안녕2');
-      await batchService.trackNewWord('안녕3');
+      await batchService.trackNewWord(newWord1);
+      await batchService.trackNewWord(newWord2);
+      await batchService.trackNewWord(newWord3);
 
       await batchService.migrateNewWordsToRepository();
 

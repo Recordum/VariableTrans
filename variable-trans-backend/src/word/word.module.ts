@@ -1,18 +1,18 @@
 import { Module } from '@nestjs/common';
-import { CacheMapWordService } from './service/cache-word/implementation/cache-map-word.service';
 import { WordServiceImpl } from './service/word.service.impl';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Word } from './entity/word.entity';
-import { CacheModule } from '@nestjs/cache-manager';
-import { redisStore } from 'cache-manager-redis-store';
 import { MysqlWordRepository } from './repository/implemnetation/mysql-word.repository';
+import { RedisCacheWordService } from './service/cache-word/implementation/redis-cache-word.service';
+import { BatchService } from './service/batch/batch.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Word])],
   providers: [
+    BatchService,
     {
       provide: 'CacheWordService',
-      useClass: CacheMapWordService,
+      useClass: RedisCacheWordService,
     },
     {
       provide: 'WordService',
@@ -23,6 +23,6 @@ import { MysqlWordRepository } from './repository/implemnetation/mysql-word.repo
       useClass: MysqlWordRepository,
     },
   ],
-  exports: ['WordService', Word],
+  exports: ['WordService'],
 })
 export class WordModule {}

@@ -18,7 +18,7 @@ export class BatchService {
     await Promise.all(words.map((word) => this.wordRepository.saveWord(word)));
   }
 
-  public async trackNewWord(korean: string) {
-    await this.CacheWordService.trackWord(korean);
+  public async trackNewWord(word: Word) {
+    await this.CacheWordService.trackWord(word);
   }
 }
