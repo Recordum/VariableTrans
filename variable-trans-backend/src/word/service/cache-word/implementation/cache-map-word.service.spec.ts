@@ -45,12 +45,12 @@ describe('CacheMapWordService', () => {
 
   describe('getTrackedWord', () => {
     it('set에 저장된 한국어를 key로 하는 value를 Map에서 전부 찾아 배열로 반환', async () => {
-      await service.trackWord('안녕1');
-      await service.trackWord('안녕2');
-      await service.trackWord('안녕3');
       const newWord1 = new Word('안녕1', 'hello1');
       const newWord2 = new Word('안녕2', 'hello2');
       const newWord3 = new Word('안녕3', 'hello3');
+      await service.trackWord(newWord1);
+      await service.trackWord(newWord2);
+      await service.trackWord(newWord3);
 
       await service.setWord('안녕1', newWord1);
       await service.setWord('안녕2', newWord2);

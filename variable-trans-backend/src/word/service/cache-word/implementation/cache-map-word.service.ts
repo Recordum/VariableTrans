@@ -5,15 +5,15 @@ import { Word } from 'src/word/entity/word.entity';
 @Injectable()
 export class CacheMapWordService implements CacheWordService {
   private wordMap: Map<string, Word> = new Map();
-  private trackedWord: Set<string> = new Set();
+  private trackedWord: Set<Word> = new Set();
 
-  public async trackWord(korean: string): Promise<void> {
-    this.trackedWord.add(korean);
+  public async trackWord(word: Word): Promise<void> {
+    this.trackedWord.add(word);
   }
 
   public async getTrackedWords(): Promise<Word[]> {
-    const trackedWords: Word[] = Array.from(this.trackedWord).map((korean) =>
-      this.wordMap.get(korean),
+    const trackedWords: Word[] = Array.from(this.trackedWord).map(
+      (word) => word,
     );
     this.trackedWord = new Set();
     return trackedWords;
