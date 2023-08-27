@@ -28,11 +28,15 @@ export class RedisSessionService implements SessionService {
     const userId = setSessionDto.getUserId();
     const grade = setSessionDto.getGrade();
     const requestLimit = setSessionDto.getRequestLimit();
-    await this.redis.set(sessionId, {
-      grade: grade,
-      userId: userId,
-      requestLimit: requestLimit,
-    });
+    await this.redis.set(
+      sessionId,
+      {
+        grade: grade,
+        userId: userId,
+        requestLimit: requestLimit,
+      },
+      86400,
+    );
   }
   public async deleteSessionData(sessionId: string): Promise<void> {
     await this.redis.del(sessionId);
