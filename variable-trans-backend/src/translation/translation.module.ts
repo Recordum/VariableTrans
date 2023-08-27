@@ -1,13 +1,12 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
-
-import { PaPagoTranslator } from './translator/implementation/papago-translator';
 import { WordModule } from 'src/word/word.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-ioredis';
 import { RedisSessionService } from 'src/user/service/session/implementation/redis-sessoin.service';
 import { TranslationController } from './controller/translation.controller';
 import { TranslationService } from './service/translation.service';
+import { PaPagoTranslator } from './service/translator/implementation/papago-translator';
 
 @Module({
   imports: [
