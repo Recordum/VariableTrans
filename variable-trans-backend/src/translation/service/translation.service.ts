@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Word } from 'src/word/entity/word.entity';
 import { WordService } from 'src/word/service/word.service';
 import { VariableNameDto } from '../dto/variable-name.dto';
-import { Translator } from '../translator/translator';
+import { Translator } from './translator/translator';
 
 @Injectable()
 export class TranslationService {

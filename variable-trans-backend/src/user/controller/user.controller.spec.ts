@@ -125,13 +125,11 @@ describe('UserController', () => {
         .build();
       await sessionService.setSessionData(sessionData);
 
-      const mockRequest = {
-        headers: {
-          sessionid: SESSION_ID,
-        },
+      const mockSession = {
+        sessionId: SESSION_ID,
       };
 
-      await userController.logout(mockRequest as any);
+      await userController.logout(mockSession as any);
 
       expect(await sessionService.getSessionData(SESSION_ID)).toBeUndefined();
     });

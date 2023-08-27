@@ -22,6 +22,18 @@
       {
         "command": "extension.translate",
         "title": "translateVariable"
+      },
+      {
+        "command": "extension.registerUser",
+        "title": "Register User"
+      },
+      {
+        "command": "extension.login",
+        "title": "Login"
+      },
+      {
+        "command": "extension.logout",
+        "title": "Logout"
       }
     ]
   },
