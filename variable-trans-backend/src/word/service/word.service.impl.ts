@@ -13,16 +13,12 @@ export class WordServiceImpl implements WordService {
 
   public async getWord(korean: string): Promise<Word> | undefined {
     if (await this.cacheWordService.isCachedWord(korean)) {
-      console.log('wordService : CACHE HIT!');
       return this.cacheWordService.getWord(korean);
     }
-    // const startTime = Date.now();
     const word: Word = await this.wordRepository.findWordByKorean(korean);
     if (word) {
       await this.cacheWordService.setWord(korean, word);
     }
-    // const endTime = Date.now();
-    // console.log(`데이터 조회 시간 ${endTime - startTime}`);
     return word;
   }
 

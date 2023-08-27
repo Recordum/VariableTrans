@@ -3,13 +3,11 @@ import { WordServiceImpl } from './word.service.impl';
 import { WordRepository } from '../repository/word.repository';
 import { CacheMapWordService } from './cache-word/implementation/cache-map-word.service';
 import { Word } from '../entity/word.entity';
-import { BatchService } from './batch/batch.service';
 
 describe('WordService', () => {
   let service: WordServiceImpl;
   let wordRepository: jest.Mocked<WordRepository>;
   let cacheWordService: CacheMapWordService;
-  let batchService: BatchService;
   let KOREAN: string;
   let VAR: string;
 
@@ -23,7 +21,6 @@ describe('WordService', () => {
         WordServiceImpl,
         { provide: 'CacheWordService', useClass: CacheMapWordService },
         { provide: 'WordRepository', useValue: wordRepository },
-        BatchService,
       ],
     }).compile();
 

@@ -17,9 +17,7 @@ export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const sessionId: string = request.headers['sessionid'];
-    console.log(sessionId);
     if (!sessionId) {
-      console.log(sessionId);
       throw new UnauthorizedException('로그인이 필요한 서비스 입니다');
     }
 

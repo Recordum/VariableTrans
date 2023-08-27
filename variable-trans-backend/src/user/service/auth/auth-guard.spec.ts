@@ -1,8 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import {
-  SetSessionDto,
-  SetSessionDtoBuilder,
-} from '../../dto/set-session.dto';
+import { SetSessionDto, SetSessionDtoBuilder } from '../../dto/set-session.dto';
 import { SessionService } from '../session/session.service';
 import { AuthGuard } from './auth-guard';
 
