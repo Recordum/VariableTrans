@@ -1,6 +1,7 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, Index, PrimaryColumn } from 'typeorm';
 
 @Entity('word')
+// @Index('korean')
 export class Word {
   @PrimaryColumn()
   korean: string;

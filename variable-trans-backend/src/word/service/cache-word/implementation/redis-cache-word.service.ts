@@ -32,7 +32,9 @@ export class RedisCacheWordService implements CacheWordService {
 
   public async trackWord(word: Word): Promise<void> {
     await this.client.sadd('trackedWords', JSON.stringify(word));
-    console.log(`tracked Word: ${word}`);
+    console.log(`tracked 
+    
+    Word: ${word}`);
   }
 
   public async getTrackedWords(): Promise<Word[]> {

@@ -1,7 +1,4 @@
-import {
-  SetSessionDto,
-  SetSessionDtoBuilder,
-} from '../../dto/set-session.dto';
+import { SetSessionDto, SetSessionDtoBuilder } from '../../dto/set-session.dto';
 import { SessionService } from '../session/session.service';
 import {
   Injectable,
@@ -19,14 +16,20 @@ export class AuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const sessionId = request.headers['sessionid'];
+    const sessionId: string = request.headers['sessionid'];
+    console.log(sessionId);
     if (!sessionId) {
+      console.log(sessionId);
       throw new UnauthorizedException('로그인이 필요한 서비스 입니다');
     }
 
     const sessionData: SetSessionDto = await this.sessionService.getSessionData(
       sessionId,
     );
+
+    if (!sessionData) {
+      throw new UnauthorizedException('만료된 세션입니다');
+    }
 
     const requestLimit: number = this.IncrementedRequestLimit(sessionData);
 
