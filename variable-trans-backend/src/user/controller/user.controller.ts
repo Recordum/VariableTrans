@@ -5,6 +5,7 @@ import { RegisterUserDto } from '../dto/register-user.dto';
 import { ResponseSessionIdDto } from '../dto/response-session.dto';
 import { AuthGuard } from '../service/auth/auth-guard';
 import { UserService } from '../service/user.service';
+import { LogoutUserDto } from '../dto/logout-user.dto';
 
 export class GenerateSessionId {
   public generate(): string {
@@ -34,9 +35,7 @@ export class UserController {
   }
 
   @Post('logout')
-  @UseGuards(AuthGuard)
-  public async logout(@Req() request): Promise<void> {
-    const sessionId = request.headers['sessionid'];
-    await this.userService.logout(sessionId);
+  public async logout(@Body() logOutUserDto: LogoutUserDto): Promise<void> {
+    await this.userService.logout(logOutUserDto.getSessionId());
   }
 }

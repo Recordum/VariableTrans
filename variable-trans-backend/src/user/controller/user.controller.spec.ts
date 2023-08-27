@@ -9,6 +9,7 @@ import { MockSessionService } from '../service/auth/auth-guard.spec';
 import { SetSessionDtoBuilder } from '../dto/set-session.dto';
 import { UserService } from '../service/user.service';
 import { ResponseSessionIdDto } from '../dto/response-session.dto';
+import { LogoutUserDto } from '../dto/logout-user.dto';
 /**
  * UserController는 단순히 UserService를 호출하는 하기 때문에
  * 실제 UserService를 주입하여 테스트 코드 작성.
@@ -125,11 +126,7 @@ describe('UserController', () => {
         .build();
       await sessionService.setSessionData(sessionData);
 
-      const mockSession = {
-        sessionId: SESSION_ID,
-      };
-
-      await userController.logout(mockSession as any);
+      await userController.logout(new LogoutUserDto(SESSION_ID));
 
       expect(await sessionService.getSessionData(SESSION_ID)).toBeUndefined();
     });
