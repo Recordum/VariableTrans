@@ -7,7 +7,7 @@ export const TypeOrmConfig: TypeOrmModuleOptions = {
   password: process.env.DB_PASSWORD,
   port: Number(process.env.DB_PORT),
   host: process.env.DB_HOST,
-  database: process.env.DB_VARIABLE,
+  database: process.env.DB_DATABASE,
   entities: [Word],
   synchronize: true,
 };
