@@ -1,40 +1,31 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import {
-  SetSessionDto,
-  SetSessionDtoBuilder,
-} from '../../../dto/set-session.dto';
+import { SetSessionDto } from '../../../dto/set-session.dto';
 import { SessionService } from '../session.service';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
+import Redis from 'ioredis';
+import { plainToClass } from 'class-transformer';
+import { SessionDataDto } from 'src/user/dto/session-data.dto';
 
 @Injectable()
 export class RedisSessionService implements SessionService {
-  constructor(@Inject(CACHE_MANAGER) private redis: Cache) {}
+  constructor(@Inject('SESSION_REDIS') private redis: Redis) {}
 
-  public async getSessionData(sessionId: string): Promise<SetSessionDto> {
+  public async getSessionData(sessionId: string): Promise<SessionDataDto> {
     const sessionData = await this.redis.get(sessionId);
     if (!sessionData) {
       throw new UnauthorizedException('존재하지 않는 세션입니다');
     }
-    return new SetSessionDtoBuilder()
-      .setSessionId(sessionId)
-      .setUserId(sessionData['userId'])
-      .setGrade(sessionData['grade'])
-      .setRequestLimit(sessionData['requestLimit'])
-      .build();
+
+    return plainToClass(SessionDataDto, JSON.parse(sessionData));
   }
+
   public async setSessionData(setSessionDto: SetSessionDto): Promise<void> {
     const sessionId = setSessionDto.getSessionId();
-    const userId = setSessionDto.getUserId();
-    const grade = setSessionDto.getGrade();
-    const requestLimit = setSessionDto.getRequestLimit();
+    const sessionDataDto: SessionDataDto =
+      SessionDataDto.fromSetSessionData(setSessionDto);
     await this.redis.set(
       sessionId,
-      {
-        grade: grade,
-        userId: userId,
-        requestLimit: requestLimit,
-      },
+      JSON.stringify(sessionDataDto),
+      'EX',
       86400,
     );
   }

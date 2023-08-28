@@ -1,3 +1,4 @@
+import { SessionDataDto } from '../../dto/session-data.dto';
 import { SetSessionDto, SetSessionDtoBuilder } from '../../dto/set-session.dto';
 import { SessionService } from '../session/session.service';
 import {
@@ -21,9 +22,8 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException('로그인이 필요한 서비스 입니다');
     }
 
-    const sessionData: SetSessionDto = await this.sessionService.getSessionData(
-      sessionId,
-    );
+    const sessionData: SessionDataDto =
+      await this.sessionService.getSessionData(sessionId);
 
     if (!sessionData) {
       throw new UnauthorizedException('만료된 세션입니다');
@@ -33,6 +33,7 @@ export class AuthGuard implements CanActivate {
 
     const updateSessionData: SetSessionDto = this.updateSession(
       requestLimit,
+      sessionId,
       sessionData,
     );
 
@@ -44,16 +45,17 @@ export class AuthGuard implements CanActivate {
     return true;
   }
 
-  private IncrementedRequestLimit(sessionData: SetSessionDto): number {
+  private IncrementedRequestLimit(sessionData: SessionDataDto): number {
     return sessionData.getRequestLimit() + 1;
   }
 
   private updateSession(
     requestLimit: number,
-    sessionData: SetSessionDto,
+    sessionId: string,
+    sessionData: SessionDataDto,
   ): SetSessionDto {
     const updateSessionData: SetSessionDto = new SetSessionDtoBuilder()
-      .setSessionId(sessionData.getSessionId())
+      .setSessionId(sessionId)
       .setGrade(sessionData.getGrade())
       .setUserId(sessionData.getUserId())
       .setRequestLimit(requestLimit)

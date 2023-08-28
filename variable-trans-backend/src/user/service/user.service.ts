@@ -13,6 +13,7 @@ import { RegisterUserDto } from '../dto/register-user.dto';
 import { User } from '../entity/user.entity';
 import { ResponseSessionIdDto } from '../dto/response-session.dto';
 import { SetSessionDto, SetSessionDtoBuilder } from '../dto/set-session.dto';
+import { SessionDataDto } from '../dto/session-data.dto';
 
 @Injectable()
 export class UserService {
@@ -83,13 +84,13 @@ export class UserService {
   }
 
   public async logout(sessionId: string): Promise<void> {
-    const sessionDto: SetSessionDto = await this.sessionService.getSessionData(
-      sessionId,
-    );
+    const sessionDataDto: SessionDataDto =
+      await this.sessionService.getSessionData(sessionId);
+
     await Promise.all([
       this.userRepository.updateRequestLimit(
-        sessionDto.getUserId(),
-        sessionDto.getRequestLimit(),
+        sessionDataDto.getUserId(),
+        sessionDataDto.getRequestLimit(),
       ),
       this.sessionService.deleteSessionData(sessionId),
     ]);

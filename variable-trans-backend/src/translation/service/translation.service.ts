@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-
-import { Word } from 'src/word/entity/word.entity';
+import { Word } from '../../word/entity/word.entity';
 import { WordService } from 'src/word/service/word.service';
 import { VariableNameDto } from '../dto/variable-name.dto';
 import { Translator } from './translator/translator';
@@ -17,7 +16,6 @@ export class TranslationService {
   public async translateVariable(korean: string): Promise<VariableNameDto> {
     korean = this.removeSpacing(korean);
     const word: Word = await this.wordService.getWord(korean);
-
     if (word) {
       return this.convertToNamingConventions(word);
     }

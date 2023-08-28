@@ -1,15 +1,19 @@
+import { SessionDataDto } from '../../dto/session-data.dto';
 import { Test, TestingModule } from '@nestjs/testing';
 import { SetSessionDto, SetSessionDtoBuilder } from '../../dto/set-session.dto';
 import { SessionService } from '../session/session.service';
 import { AuthGuard } from './auth-guard';
 
 export class MockSessionService implements SessionService {
-  private sessionDataMap: Map<string, SetSessionDto> = new Map();
-  public async getSessionData(sessionId: string): Promise<SetSessionDto> {
+  private sessionDataMap: Map<string, SessionDataDto> = new Map();
+  public async getSessionData(sessionId: string): Promise<SessionDataDto> {
     return this.sessionDataMap.get(sessionId);
   }
   public async setSessionData(setSessionDto: SetSessionDto): Promise<void> {
-    this.sessionDataMap.set(setSessionDto.getSessionId(), setSessionDto);
+    this.sessionDataMap.set(
+      setSessionDto.getSessionId(),
+      SessionDataDto.fromSetSessionData(setSessionDto),
+    );
   }
   public async deleteSessionData(sessionId: string): Promise<void> {
     this.sessionDataMap.delete(sessionId);

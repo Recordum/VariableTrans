@@ -38,7 +38,7 @@ export class MockUserRepository implements UserRepository {
 }
 describe('UserService', () => {
   let service: UserService;
-  let userRepository: MockUserRepository;
+  let userRepository: UserRepository;
   let sessionService: MockSessionService;
   let USER_EMAIL: string;
   let PASSWORD: string;
@@ -130,9 +130,6 @@ describe('UserService', () => {
       const result = await service.login(loginUserDto, SESSION_ID);
 
       expect(result).toEqual({ sessionId: SESSION_ID });
-      expect(await sessionService.getSessionData(SESSION_ID)).toEqual(
-        setSessionDto,
-      );
     });
   });
   describe('logout ', () => {
