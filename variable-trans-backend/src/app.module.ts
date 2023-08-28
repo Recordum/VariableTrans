@@ -7,10 +7,8 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from './user/entity/user.entity';
 import { Word } from './word/entity/word.entity';
-import { Redis } from 'ioredis';
 
-console.log(process.env.NODE_ENV);
-console.log(`.${process.env.NODE_ENV}.env`);
+console.log('현재 실행 환경 : ' + process.env.NODE_ENV);
 @Global()
 @Module({
   imports: [
