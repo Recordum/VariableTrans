@@ -3,7 +3,7 @@ import { SetSessionDto } from '../../../dto/set-session.dto';
 import { SessionService } from '../session.service';
 import Redis from 'ioredis';
 import { plainToClass } from 'class-transformer';
-import { SessionDataDto } from 'src/user/dto/session-data.dto';
+import { SessionDataDto } from '../../../dto/session-data.dto';
 
 @Injectable()
 export class RedisSessionService implements SessionService {
