@@ -8,18 +8,20 @@ import {
   SetSessionDtoBuilder,
 } from '../src/user/dto/set-session.dto';
 import Redis from 'ioredis';
+import { DataSource } from 'typeorm';
 
-describe('TranslationController (e2e)', () => {
+describe('Translation (e2e)', () => {
   let app: INestApplication;
   let redisSessionService: RedisSessionService;
   let moduleFixture: TestingModule;
   let testSessionData: SetSessionDto;
+  let dataSource: DataSource;
   const SESSION_ID = 'test-session-id';
   beforeAll(async () => {
     moduleFixture = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
-
+    dataSource = moduleFixture.get<DataSource>(DataSource);
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new ValidationPipe({ transform: true })); // Global ValidationPipe 추가
     await app.init();

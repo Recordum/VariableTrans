@@ -43,7 +43,6 @@ describe('UserService', () => {
   let USER_EMAIL: string;
   let PASSWORD: string;
   let SESSION_ID: string;
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -120,12 +119,6 @@ describe('UserService', () => {
       await user.encodePassword();
       userRepository.saveUser(user);
       const loginUserDto = new LoginUserDto(USER_EMAIL, PASSWORD);
-      const setSessionDto = new SetSessionDtoBuilder()
-        .setGrade('normal')
-        .setRequestLimit(0)
-        .setSessionId(SESSION_ID)
-        .setUserId(user.getId())
-        .build();
 
       const result = await service.login(loginUserDto, SESSION_ID);
 
