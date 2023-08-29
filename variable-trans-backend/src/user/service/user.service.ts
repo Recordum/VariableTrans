@@ -14,6 +14,7 @@ import { User } from '../entity/user.entity';
 import { ResponseSessionIdDto } from '../dto/response-session.dto';
 import { SetSessionDto, SetSessionDtoBuilder } from '../dto/set-session.dto';
 import { SessionDataDto } from '../dto/session-data.dto';
+import { UserErrorMessage } from '../../constants/execption-message';
 
 @Injectable()
 export class UserService {
@@ -25,7 +26,7 @@ export class UserService {
   public async registerUser(registerUserDto: RegisterUserDto) {
     if (await this.isEmailAlreadyRegistered(registerUserDto.getUserEmail())) {
       throw new HttpException(
-        '이미 존재하는 이메일입니다',
+        UserErrorMessage.ALEADY_EXIST_EMAIL,
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -64,7 +65,7 @@ export class UserService {
       loginUserDto.getUserEmail(),
     );
     if (!user || !(await user.validatePasword(loginUserDto.getPassword()))) {
-      throw new UnauthorizedException('잘못된 Email 혹은 비밀번호 입니다.');
+      throw new UnauthorizedException(UserErrorMessage.WRONG_PASSWORD_OR_EMAIL);
     }
     return user;
   }

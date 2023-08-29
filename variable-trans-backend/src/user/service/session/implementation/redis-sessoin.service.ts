@@ -4,6 +4,7 @@ import { SessionService } from '../session.service';
 import Redis from 'ioredis';
 import { plainToClass } from 'class-transformer';
 import { SessionDataDto } from '../../../dto/session-data.dto';
+import { AuthErrorMessage } from '../../../../constants/execption-message';
 
 @Injectable()
 export class RedisSessionService implements SessionService {
@@ -12,7 +13,7 @@ export class RedisSessionService implements SessionService {
   public async getSessionData(sessionId: string): Promise<SessionDataDto> {
     const sessionData = await this.redis.get(sessionId);
     if (!sessionData) {
-      throw new UnauthorizedException('존재하지 않는 세션입니다');
+      throw new UnauthorizedException(AuthErrorMessage.SESSION_NOT_FOUND);
     }
 
     return plainToClass(SessionDataDto, JSON.parse(sessionData));

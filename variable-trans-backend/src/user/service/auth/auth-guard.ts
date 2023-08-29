@@ -1,3 +1,5 @@
+import { AuthErrorMessage } from '../../../constants/execption-message';
+import { DAILY_LIMIT, UserGrade } from '../../../constants/user-constants';
 import { SessionDataDto } from '../../dto/session-data.dto';
 import { SetSessionDto, SetSessionDtoBuilder } from '../../dto/set-session.dto';
 import { SessionService } from '../session/session.service';
@@ -19,14 +21,14 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const sessionId: string = request.headers['sessionid'];
     if (!sessionId) {
-      throw new UnauthorizedException('로그인이 필요한 서비스 입니다');
+      throw new UnauthorizedException(AuthErrorMessage.NEED_LOGIN);
     }
 
     const sessionData: SessionDataDto =
       await this.sessionService.getSessionData(sessionId);
 
     if (!sessionData) {
-      throw new UnauthorizedException('만료된 세션입니다');
+      throw new UnauthorizedException(AuthErrorMessage.EXPIRES_SESSION);
     }
 
     const requestLimit: number = this.IncrementedRequestLimit(sessionData);
@@ -38,7 +40,7 @@ export class AuthGuard implements CanActivate {
     );
 
     if (this.exceedLimit(updateSessionData)) {
-      throw new UnauthorizedException('요청 횟수 초과');
+      throw new UnauthorizedException(AuthErrorMessage.REQUEST_LIMIT_EXCEEDED);
     }
 
     request.sessionData = updateSessionData;
@@ -67,8 +69,8 @@ export class AuthGuard implements CanActivate {
 
   private exceedLimit(updateSessionData: SetSessionDto): boolean {
     return (
-      updateSessionData.getRequestLimit() > 20 &&
-      updateSessionData.getGrade() === 'normal'
+      updateSessionData.getRequestLimit() > DAILY_LIMIT &&
+      updateSessionData.getGrade() === UserGrade.NORMAL
     );
   }
 }
