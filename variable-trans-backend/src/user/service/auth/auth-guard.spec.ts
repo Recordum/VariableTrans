@@ -1,27 +1,11 @@
-import { SessionDataDto } from '../../dto/session-data.dto';
 import { Test, TestingModule } from '@nestjs/testing';
-import { SetSessionDto, SetSessionDtoBuilder } from '../../dto/set-session.dto';
-import { SessionService } from '../session/session.service';
+import { SetSessionDtoBuilder } from '../../dto/set-session.dto';
 import { AuthGuard } from './auth-guard';
+import { MemorySessionService } from '../session/implementation/memory-session.service';
 
-export class MockSessionService implements SessionService {
-  private sessionDataMap: Map<string, SessionDataDto> = new Map();
-  public async getSessionData(sessionId: string): Promise<SessionDataDto> {
-    return this.sessionDataMap.get(sessionId);
-  }
-  public async setSessionData(setSessionDto: SetSessionDto): Promise<void> {
-    this.sessionDataMap.set(
-      setSessionDto.getSessionId(),
-      SessionDataDto.fromSetSessionData(setSessionDto),
-    );
-  }
-  public async deleteSessionData(sessionId: string): Promise<void> {
-    this.sessionDataMap.delete(sessionId);
-  }
-}
 describe('AuthGuard: canActivate()', () => {
   let service: AuthGuard;
-  let sessionService: MockSessionService;
+  let sessionService: MemorySessionService;
   let LIMIT: number;
   let GRADE: string;
   let USER_ID: string;
@@ -31,12 +15,12 @@ describe('AuthGuard: canActivate()', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthGuard,
-        { provide: 'SessionService', useClass: MockSessionService },
+        { provide: 'SessionService', useClass: MemorySessionService },
       ],
     }).compile();
 
     service = module.get<AuthGuard>(AuthGuard);
-    sessionService = module.get<MockSessionService>('SessionService');
+    sessionService = module.get<MemorySessionService>('SessionService');
     LIMIT = 20;
     GRADE = 'normal';
     USER_ID = 'userId';

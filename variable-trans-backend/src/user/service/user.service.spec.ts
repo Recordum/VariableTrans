@@ -6,40 +6,14 @@ import { User } from '../entity/user.entity';
 import { LoginUserDto } from '../dto/login-user.dto';
 import { UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { MockSessionService } from './auth/auth-guard.spec';
 import { SetSessionDtoBuilder } from '../dto/set-session.dto';
+import { MemoryUserRepository } from '../repository/implementation/memory-user.repository';
+import { MemorySessionService } from './session/implementation/memory-session.service';
 
-export class MockUserRepository implements UserRepository {
-  public users: User[] = [];
-
-  async updateRequestLimit(id: string, requestLimit: number) {
-    const user = await this.findUserById(id);
-    user.requestLimit = requestLimit;
-    this.saveUser(user);
-  }
-
-  async updatePassword(id: string, password: string) {
-    const user = await this.findUserById(id);
-    user.password = password;
-    this.saveUser(user);
-  }
-
-  async saveUser(user: User): Promise<void> {
-    this.users.push(user);
-  }
-
-  async findUserById(id: string): Promise<User> {
-    return this.users.find((user) => user.Id === id);
-  }
-
-  async findUserByEmail(userEmail: string): Promise<User> {
-    return this.users.find((user) => user.userEmail === userEmail);
-  }
-}
 describe('UserService', () => {
   let service: UserService;
   let userRepository: UserRepository;
-  let sessionService: MockSessionService;
+  let sessionService: MemorySessionService;
   let USER_EMAIL: string;
   let PASSWORD: string;
   let SESSION_ID: string;
@@ -47,14 +21,14 @@ describe('UserService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserService,
-        { provide: 'UserRepository', useClass: MockUserRepository },
-        { provide: 'SessionService', useClass: MockSessionService },
+        { provide: 'UserRepository', useClass: MemoryUserRepository },
+        { provide: 'SessionService', useClass: MemorySessionService },
       ],
     }).compile();
 
     service = module.get<UserService>(UserService);
-    userRepository = module.get<MockUserRepository>('UserRepository');
-    sessionService = module.get<MockSessionService>('SessionService');
+    userRepository = module.get<MemoryUserRepository>('UserRepository');
+    sessionService = module.get<MemorySessionService>('SessionService');
     PASSWORD = 'testPassword';
     USER_EMAIL = 'mingyu@example.com';
     SESSION_ID = 'SessionId';

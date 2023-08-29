@@ -3,13 +3,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserController, GenerateSessionId } from './user.controller';
 import { RegisterUserDto } from '../dto/register-user.dto';
 import { AuthGuard } from '../service/auth/auth-guard';
-import { MockUserRepository } from '../service/user.service.spec';
 import { User } from '../entity/user.entity';
-import { MockSessionService } from '../service/auth/auth-guard.spec';
 import { SetSessionDtoBuilder } from '../dto/set-session.dto';
 import { UserService } from '../service/user.service';
 import { ResponseSessionIdDto } from '../dto/response-session.dto';
 import { LogoutUserDto } from '../dto/logout-user.dto';
+import { MemoryUserRepository } from '../repository/implementation/memory-user.repository';
+import { MemorySessionService } from '../service/session/implementation/memory-session.service';
 /**
  * UserController는 단순히 UserService를 호출하는 하기 때문에
  * 실제 UserService를 주입하여 테스트 코드 작성.
@@ -19,8 +19,8 @@ import { LogoutUserDto } from '../dto/logout-user.dto';
 describe('UserController', () => {
   let userController: UserController;
   let authGaurd: Partial<jest.Mocked<AuthGuard>>;
-  let userRepository: MockUserRepository;
-  let sessionService: MockSessionService;
+  let userRepository: MemoryUserRepository;
+  let sessionService: MemorySessionService;
   let generateSessionId: jest.Mocked<GenerateSessionId>;
   let PASSWORD: string;
   let USER_EMAIL: string;
@@ -39,14 +39,14 @@ describe('UserController', () => {
         UserService,
         { provide: GenerateSessionId, useValue: generateSessionId },
         { provide: AuthGuard, useValue: authGaurd },
-        { provide: 'SessionService', useClass: MockSessionService },
-        { provide: 'UserRepository', useClass: MockUserRepository },
+        { provide: 'SessionService', useClass: MemorySessionService },
+        { provide: 'UserRepository', useClass: MemoryUserRepository },
       ],
     }).compile();
 
     userController = module.get<UserController>(UserController);
-    userRepository = module.get<MockUserRepository>('UserRepository');
-    sessionService = module.get<MockSessionService>('SessionService');
+    userRepository = module.get<MemoryUserRepository>('UserRepository');
+    sessionService = module.get<MemorySessionService>('SessionService');
     PASSWORD = 'testPassword';
     USER_EMAIL = 'mingyu@example.com';
     SESSION_ID = 'SessionId';
